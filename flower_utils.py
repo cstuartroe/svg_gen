@@ -10,13 +10,13 @@ def star_peaks_valleys(points, center, peak_radius, valley_radius, askew):
         center_x, center_y = center
 
         peaks.append((
-            center_x + peak_radius * math.cos(peak_theta),
-            center_y + peak_radius * math.sin(peak_theta),
+            center_x + round(peak_radius * math.cos(peak_theta)),
+            center_y + round(peak_radius * math.sin(peak_theta)),
         ))
 
         valleys.append((
-            center_x + valley_radius * math.cos(valley_theta),
-            center_y + valley_radius * math.sin(valley_theta)
+            center_x + round(valley_radius * math.cos(valley_theta)),
+            center_y + round(valley_radius * math.sin(valley_theta))
         ))
 
     return peaks, valleys
@@ -62,13 +62,13 @@ def flower_control_points(center, peak, valley, curviness):
     )
 
     outer_control = (
-        peak_x + direction_vector[0]*curviness,
-        peak_y + direction_vector[1]*curviness,
+        peak_x + round(direction_vector[0]*curviness),
+        peak_y + round(direction_vector[1]*curviness),
     )
 
     inner_control = (
-        valley_x - direction_vector[0]*curviness,
-        valley_y - direction_vector[1]*curviness,
+        valley_x - round(direction_vector[0]*curviness),
+        valley_y - round(direction_vector[1]*curviness),
     )
 
     return outer_control, inner_control

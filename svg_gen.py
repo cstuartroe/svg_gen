@@ -11,7 +11,7 @@ def svg_template(height, width, *paths):
 
 def create_rasta_flower():
     width, height = 1000, 1000
-    center = width/2, height/2
+    center = width//2, height//2
 
     stars = list(map(lambda x: path_template(
         flower_path(
@@ -45,7 +45,7 @@ def create_rasta_flower():
 
 def create_trippy_lotus():
     width, height = 1000, 1000
-    center = width / 2, height / 2
+    center = width // 2, height // 2
 
     stars = list(map(lambda x: path_template(
         flower_path(
@@ -80,7 +80,7 @@ def create_trippy_lotus():
 
 def create_black_lotus():
     width, height = 1000, 1000
-    center = width / 2, height / 2
+    center = width // 2, height // 2
 
     path = path_template(
         flower_path(
@@ -108,7 +108,7 @@ def create_black_lotus():
 
 def create_rub_el_hizb_black_solid():
     width, height = 1000, 1000
-    center = width/2, height/2
+    center = width//2, height//2
     radius = 500
 
     path = path_template(
