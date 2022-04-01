@@ -75,7 +75,7 @@ def flower_control_points(center, peak, valley, curviness):
 
 
 def flower_path(peaks, valleys, center, curviness=1/6):
-    vertex_string = f"M {peaks[0][0]} {peaks[0][1]}"
+    vertex_string = f"M {peaks[0][0]} {peaks[0][1]} "
 
     for i in range(len(peaks)):
         source_peak, valley, dest_peak = peaks[i], valleys[i], peaks[(i+1) % len(peaks)]
@@ -87,3 +87,12 @@ def flower_path(peaks, valleys, center, curviness=1/6):
         vertex_string += f"C {control1_x} {control1_y}, {control2_x} {control2_y}, {dest_peak[0]} {dest_peak[1]} "
 
     return vertex_string + "Z"
+
+
+def rectangle_path(x, y, width, height):
+    return polygon_path([
+        (x, y),
+        (x + width, y),
+        (x + width, y + height),
+        (x, y + height),
+    ])
