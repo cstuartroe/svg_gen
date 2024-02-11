@@ -1,0 +1,6 @@
+<svg height="1200" width="1200">
+<rect x="0" y="0" width="1200" height="1200" rx="0" fill="#ddddcc"/>
+<rect x="50" y="50" width="1100" height="1100" rx="50" fill="#478547"/>
+<path d="M 300 500 L 328 572 L 400 600 L 328 628 L 300 700 L 272 628 L 200 600 L 272 572 Z" fill="#ddddcc"/>
+<path d="M 900 500 L 928 572 L 1000 600 L 928 628 L 900 700 L 872 628 L 800 600 L 872 572 Z" fill="#ddddcc"/>
+</svg>

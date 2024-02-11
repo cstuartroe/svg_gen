@@ -1,0 +1,19 @@
+<svg height="1200" width="1200">
+<rect x="0" y="0" width="1200" height="1200" rx="0" fill="#000000"/>
+<rect x="50" y="50" width="550" height="550" rx="50" fill="#478547"/>
+<rect x="550" y="50" width="50" height="50" rx="0" fill="#478547"/>
+<rect x="550" y="550" width="50" height="50" rx="0" fill="#478547"/>
+<rect x="50" y="550" width="50" height="50" rx="0" fill="#478547"/>
+<rect x="600" y="50" width="550" height="550" rx="50" fill="#dbb448"/>
+<rect x="600" y="50" width="50" height="50" rx="0" fill="#dbb448"/>
+<rect x="1100" y="550" width="50" height="50" rx="0" fill="#dbb448"/>
+<rect x="600" y="550" width="50" height="50" rx="0" fill="#dbb448"/>
+<rect x="600" y="600" width="550" height="550" rx="50" fill="#994936"/>
+<rect x="600" y="600" width="50" height="50" rx="0" fill="#994936"/>
+<rect x="1100" y="600" width="50" height="50" rx="0" fill="#994936"/>
+<rect x="600" y="1100" width="50" height="50" rx="0" fill="#994936"/>
+<rect x="50" y="600" width="550" height="550" rx="50" fill="#343445"/>
+<rect x="50" y="600" width="50" height="50" rx="0" fill="#343445"/>
+<rect x="550" y="600" width="50" height="50" rx="0" fill="#343445"/>
+<rect x="550" y="1100" width="50" height="50" rx="0" fill="#343445"/>
+</svg>

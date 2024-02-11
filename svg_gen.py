@@ -1,24 +1,4 @@
-from enum import Enum
-from flower_utils import *
-
-
-class Color(Enum):
-    BLACK = "#000000"
-    WHITE = "#ffffff"
-    INDIGO = "#003355"
-    BP = "#3e008f"
-    GOLD = "#ffbb00"
-    FOREST_GREEN = "#005500"
-    PURPLE = "#330055"
-    RED = "#661111"
-
-
-def path_template(vertex_string, color):
-    return f'<path d="{vertex_string}" fill="{color}"/>'
-
-
-def svg_template(width, height, *paths):
-    return f'<svg height="{height}" width="{width}">\n' + "\n".join(paths) + '\n</svg>'
+from utils import *
 
 
 def create_rasta_flower():
@@ -27,11 +7,10 @@ def create_rasta_flower():
 
     stars = list(map(lambda x: path_template(
         flower_path(
-            *star_peaks_valleys(
+            *flat_armed_star_peaks_valleys(
                 6,
                 center,
                 x[0],
-                flat_arm_valley_radius(6, x[0]),
                 False,
             ),
             center,
@@ -50,7 +29,7 @@ def create_rasta_flower():
             svg_template(
                 width,
                 height,
-                *stars,
+                stars,
             )
         )
 
@@ -85,7 +64,7 @@ def create_trippy_lotus():
             svg_template(
                 width,
                 height,
-                *stars,
+                stars,
             )
         )
 
@@ -113,7 +92,7 @@ def create_black_lotus():
             svg_template(
                 width,
                 height,
-                path,
+                [path],
             )
         )
 
@@ -141,7 +120,7 @@ def create_rub_el_hizb_black_solid():
             svg_template(
                 width,
                 height,
-                path,
+                [path],
             )
         )
 
@@ -305,15 +284,17 @@ def create_lauvinko_flag():
             svg_template(
                 width,
                 height,
-                *tris,
-                horizontal_stripe,
-                vertical_stripe,
-                diagonal_stripe1,
-                diagonal_stripe2,
-                star_outer,
-                *stars,
-                # text,
-                circle,
+                [
+                    *tris,
+                    horizontal_stripe,
+                    vertical_stripe,
+                    diagonal_stripe1,
+                        diagonal_stripe2,
+                    star_outer,
+                    *stars,
+                    # text,
+                    circle,
+                ],
             )
         )
 
@@ -339,7 +320,7 @@ def create_lauvinko_tricolor(width: int = 1800, height: int = 1200):
             svg_template(
                 width,
                 height,
-                *rects,
+                rects,
             )
         )
 

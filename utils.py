@@ -1,4 +1,5 @@
 import math
+from enum import Enum
 
 
 def star_peaks_valleys(points, center, peak_radius, valley_radius, askew):
@@ -96,3 +97,36 @@ def rectangle_path(x, y, width, height):
         (x + width, y + height),
         (x, y + height),
     ])
+
+
+class Color(Enum):
+    BLACK = "#000000"
+    WHITE = "#ffffff"
+    INDIGO = "#003355"
+    BP = "#3e008f"
+    GOLD = "#ffbb00"
+    FOREST_GREEN = "#005500"
+    PURPLE = "#330055"
+    RED = "#661111"
+    CREAM = "#ddddcc"
+
+    SPRING_GREEN = "#478547"
+    SUMMER_GOLD = "#dbb448"
+    AUTUMN_RED = "#994936"
+    WINTER_BLUE = "#343445"
+
+
+def path_template(vertex_string, color):
+    return f'<path d="{vertex_string}" fill="{color}"/>'
+
+
+def rounded_rectangle_template(x, y, width, height, radius, color):
+    return f'<rect x="{x}" y="{y}" width="{width}" height="{height}" rx="{radius}" fill="{color}"/>'
+
+
+def circle_template(cx, cy, radius, color):
+    return f'<circle cx="{cx}" cy="{cy}" r="{radius}" fill="{color}"/>'
+
+
+def svg_template(width, height, paths):
+    return f'<svg height="{height}" width="{width}">\n' + "\n".join(paths) + '\n</svg>'
