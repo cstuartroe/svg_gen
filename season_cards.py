@@ -61,8 +61,9 @@ SHAPES = {
 
 
 SIDE_LENGTH = 1200
-BORDER_WIDTH = 50
+BORDER_WIDTH = 75
 CORNER_RADIUS = BORDER_WIDTH
+INNER_LENGTH = SIDE_LENGTH - BORDER_WIDTH*2
 
 
 @dataclass
@@ -145,6 +146,32 @@ def make_season_cards():
                     )
 
 
+# starts on the top and goes clockwise
+def diamond_corners(center: tuple[int, int], radius: int):
+    x, y = center
+    return [
+        (x, y - radius),
+        (x + radius, y),
+        (x, y + radius),
+        (x - radius, y),
+    ]
+
+
+# starts on the top right and goes clockwise
+def square_corners(center: tuple[int, int], radius: int):
+    x, y = center
+    return [
+        (x + radius, y - radius),
+        (x + radius, y + radius),
+        (x - radius, y + radius),
+        (x - radius, y - radius),
+    ]
+
+
+def rotate_list(l: list, r: int):
+    return l[r:] + l[:r]
+
+
 def make_back():
     filepath = f"{CARDS_DIR}/back.svg"
 
@@ -157,45 +184,59 @@ def make_back():
         )
     )
 
-    color_xys = [
-        (Color.SPRING_GREEN, BORDER_WIDTH, BORDER_WIDTH),
-        (Color.SUMMER_GOLD, SIDE_LENGTH//2, BORDER_WIDTH),
-        (Color.AUTUMN_RED, SIDE_LENGTH//2, SIDE_LENGTH//2),
-        (Color.WINTER_BLUE, BORDER_WIDTH, SIDE_LENGTH//2)
-    ]
-
-    for i, (color, x, y) in enumerate(color_xys):
-        paths.append(
-            rounded_rectangle_template(
-                x,
-                y,
-                SIDE_LENGTH//2 - BORDER_WIDTH,
-                SIDE_LENGTH//2 - BORDER_WIDTH,
-                radius=CORNER_RADIUS,
-                color=color.value,
-            )
+    color_order = rotate_list(list(SEASON_COLORS.values()), 3)
+    corner_color = color_order[0]
+    # paint the corner color as background first and skip it later
+    # in order to preserve rounded corners
+    paths.append(
+        rounded_rectangle_template(
+            BORDER_WIDTH, BORDER_WIDTH, INNER_LENGTH, INNER_LENGTH,
+            radius=CORNER_RADIUS,
+            color=corner_color.value,
         )
+    )
 
-        adjust = SIDE_LENGTH//2 - BORDER_WIDTH*2
-        corner_xys = [
-            (x, y),
-            (x + adjust, y),
-            (x + adjust, y + adjust),
-            (x, y + adjust)
-        ]
+    center = (SIDE_LENGTH//2, SIDE_LENGTH//2)
+    for i, diamond_center in enumerate(square_corners(
+        center,
+        INNER_LENGTH//4,
+    )):
+        this_color_order = rotate_list(color_order, 4-i)
+        this_diamond_corners = diamond_corners(diamond_center, INNER_LENGTH//4)
+        this_square_corners = square_corners(diamond_center, INNER_LENGTH//4)
+        for j, color in zip(range(4), this_color_order):
+            if color is corner_color:
+                continue
 
-        corners = [
-            rounded_rectangle_template(
-                cx, cy, BORDER_WIDTH, BORDER_WIDTH,
-                radius=0,
-                color=color.value,
+            paths.append(
+                path_template(
+                    vertex_string=polygon_path([
+                        this_diamond_corners[j],
+                        this_square_corners[j],
+                        this_diamond_corners[(j + 1) % 4]
+                    ]),
+                    color=color.value,
+                )
             )
-            for cx, cy in corner_xys
-        ]
+            paths.append(
+                path_template(
+                    vertex_string=polygon_path([
+                        this_diamond_corners[(j + 2) % 4],
+                        diamond_center,
+                        this_diamond_corners[(j + 3) % 4],
+                    ]),
+                    color=color.value,
+                )
+            )
 
-        for j, corner in enumerate(corners):
-            if i != j:
-                paths.append(corner)
+    paths.append(
+        path_template(
+            polygon_path(
+                diamond_corners(center, INNER_LENGTH//4),
+            ),
+            color=color_order[2].value,
+        )
+    )
 
     with open(filepath, "w") as fh:
         fh.write(

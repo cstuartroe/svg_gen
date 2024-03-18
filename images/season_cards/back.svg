@@ -1,19 +1,29 @@
 <svg height="1200" width="1200">
 <rect x="0" y="0" width="1200" height="1200" rx="0" fill="#000000"/>
-<rect x="50" y="50" width="550" height="550" rx="50" fill="#478547"/>
-<rect x="550" y="50" width="50" height="50" rx="0" fill="#478547"/>
-<rect x="550" y="550" width="50" height="50" rx="0" fill="#478547"/>
-<rect x="50" y="550" width="50" height="50" rx="0" fill="#478547"/>
-<rect x="600" y="50" width="550" height="550" rx="50" fill="#dbb448"/>
-<rect x="600" y="50" width="50" height="50" rx="0" fill="#dbb448"/>
-<rect x="1100" y="550" width="50" height="50" rx="0" fill="#dbb448"/>
-<rect x="600" y="550" width="50" height="50" rx="0" fill="#dbb448"/>
-<rect x="600" y="600" width="550" height="550" rx="50" fill="#994936"/>
-<rect x="600" y="600" width="50" height="50" rx="0" fill="#994936"/>
-<rect x="1100" y="600" width="50" height="50" rx="0" fill="#994936"/>
-<rect x="600" y="1100" width="50" height="50" rx="0" fill="#994936"/>
-<rect x="50" y="600" width="550" height="550" rx="50" fill="#343445"/>
-<rect x="50" y="600" width="50" height="50" rx="0" fill="#343445"/>
-<rect x="550" y="600" width="50" height="50" rx="0" fill="#343445"/>
-<rect x="550" y="1100" width="50" height="50" rx="0" fill="#343445"/>
+<rect x="75" y="75" width="1050" height="1050" rx="75" fill="#343445"/>
+<path d="M 1124 338 L 1124 600 L 862 600 Z" fill="#478547"/>
+<path d="M 600 338 L 862 338 L 862 76 Z" fill="#478547"/>
+<path d="M 862 600 L 600 600 L 600 338 Z" fill="#dbb448"/>
+<path d="M 862 76 L 862 338 L 1124 338 Z" fill="#dbb448"/>
+<path d="M 600 338 L 600 76 L 862 76 Z" fill="#994936"/>
+<path d="M 1124 338 L 862 338 L 862 600 Z" fill="#994936"/>
+<path d="M 862 600 L 1124 600 L 1124 862 Z" fill="#994936"/>
+<path d="M 862 1124 L 862 862 L 600 862 Z" fill="#994936"/>
+<path d="M 862 1124 L 600 1124 L 600 862 Z" fill="#478547"/>
+<path d="M 862 600 L 862 862 L 1124 862 Z" fill="#478547"/>
+<path d="M 600 862 L 600 600 L 862 600 Z" fill="#dbb448"/>
+<path d="M 1124 862 L 862 862 L 862 1124 Z" fill="#dbb448"/>
+<path d="M 338 600 L 600 600 L 600 862 Z" fill="#dbb448"/>
+<path d="M 338 1124 L 338 862 L 76 862 Z" fill="#dbb448"/>
+<path d="M 600 862 L 600 1124 L 338 1124 Z" fill="#994936"/>
+<path d="M 76 862 L 338 862 L 338 600 Z" fill="#994936"/>
+<path d="M 76 862 L 76 600 L 338 600 Z" fill="#478547"/>
+<path d="M 600 862 L 338 862 L 338 1124 Z" fill="#478547"/>
+<path d="M 338 76 L 600 76 L 600 338 Z" fill="#478547"/>
+<path d="M 338 600 L 338 338 L 76 338 Z" fill="#478547"/>
+<path d="M 600 338 L 600 600 L 338 600 Z" fill="#dbb448"/>
+<path d="M 76 338 L 338 338 L 338 76 Z" fill="#dbb448"/>
+<path d="M 338 600 L 76 600 L 76 338 Z" fill="#994936"/>
+<path d="M 338 76 L 338 338 L 600 338 Z" fill="#994936"/>
+<path d="M 600 338 L 862 600 L 600 862 L 338 600 Z" fill="#dbb448"/>
 </svg>
