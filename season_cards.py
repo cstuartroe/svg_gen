@@ -60,8 +60,8 @@ SHAPES = {
 }
 
 
-SIDE_LENGTH = 1200
-BORDER_WIDTH = 75
+SIDE_LENGTH = 2400
+BORDER_WIDTH = 150
 CORNER_RADIUS = BORDER_WIDTH
 INNER_LENGTH = SIDE_LENGTH - BORDER_WIDTH*2
 
@@ -71,32 +71,38 @@ class NumberInfo:
     radius: int
     centers: list[tuple[int, int]]
 
+LARGE = SIDE_LENGTH//6
+SMALL = SIDE_LENGTH//12
+
+QUARTER = SIDE_LENGTH//4
+HALF = SIDE_LENGTH//2
+THREE_QUARTER = 3*SIDE_LENGTH//4
 
 NUMBERS = [
-    NumberInfo(200, [
-        (600, 600),
+    NumberInfo(LARGE, [
+        (HALF, HALF),
     ]),
-    NumberInfo(100, [
-        (300, 600),
-        (900, 600),
+    NumberInfo(SMALL, [
+        (QUARTER, HALF),
+        (THREE_QUARTER, HALF),
     ]),
-    NumberInfo(100, [
-        (300, 600),
-        (600, 600),
-        (900, 600),
+    NumberInfo(SMALL, [
+        (QUARTER, HALF),
+        (HALF, HALF),
+        (THREE_QUARTER, HALF),
     ]),
-    NumberInfo(100, [
-        (300, 600),
-        (600, 300),
-        (900, 600),
-        (600, 900),
+    NumberInfo(SMALL, [
+        (QUARTER, HALF),
+        (HALF, QUARTER),
+        (THREE_QUARTER, HALF),
+        (HALF, THREE_QUARTER),
     ]),
-    NumberInfo(100, [
-        (300, 600),
-        (600, 300),
-        (600, 600),
-        (900, 600),
-        (600, 900),
+    NumberInfo(SMALL, [
+        (QUARTER, HALF),
+        (HALF, QUARTER),
+        (HALF, HALF),
+        (THREE_QUARTER, HALF),
+        (HALF, THREE_QUARTER),
     ]),
 ]
 
@@ -169,6 +175,7 @@ def square_corners(center: tuple[int, int], radius: int):
 
 
 def rotate_list(l: list, r: int):
+    r = r % len(l)
     return l[r:] + l[:r]
 
 
@@ -184,10 +191,11 @@ def make_back():
         )
     )
 
-    color_order = rotate_list(list(SEASON_COLORS.values()), 3)
-    corner_color = color_order[0]
-    # paint the corner color as background first and skip it later
-    # in order to preserve rounded corners
+    corner_color = Color.WINTER_BLUE
+    center_color = Color.SUMMER_GOLD
+    color1 = Color.SPRING_GREEN
+    color2 = Color.AUTUMN_RED
+
     paths.append(
         rounded_rectangle_template(
             BORDER_WIDTH, BORDER_WIDTH, INNER_LENGTH, INNER_LENGTH,
@@ -197,46 +205,84 @@ def make_back():
     )
 
     center = (SIDE_LENGTH//2, SIDE_LENGTH//2)
-    for i, diamond_center in enumerate(square_corners(
-        center,
-        INNER_LENGTH//4,
-    )):
-        this_color_order = rotate_list(color_order, 4-i)
-        this_diamond_corners = diamond_corners(diamond_center, INNER_LENGTH//4)
-        this_square_corners = square_corners(diamond_center, INNER_LENGTH//4)
-        for j, color in zip(range(4), this_color_order):
-            if color is corner_color:
-                continue
-
-            paths.append(
-                path_template(
-                    vertex_string=polygon_path([
-                        this_diamond_corners[j],
-                        this_square_corners[j],
-                        this_diamond_corners[(j + 1) % 4]
-                    ]),
-                    color=color.value,
-                )
-            )
-            paths.append(
-                path_template(
-                    vertex_string=polygon_path([
-                        this_diamond_corners[(j + 2) % 4],
-                        diamond_center,
-                        this_diamond_corners[(j + 3) % 4],
-                    ]),
-                    color=color.value,
-                )
-            )
 
     paths.append(
         path_template(
             polygon_path(
                 diamond_corners(center, INNER_LENGTH//4),
             ),
-            color=color_order[2].value,
+            color=center_color.value,
         )
     )
+    for i, square_corner in enumerate(square_corners(center, INNER_LENGTH//4)):
+        other_corners = rotate_list(
+            diamond_corners(square_corner, INNER_LENGTH//4),
+            i
+        )[:2]
+        paths.append(
+            path_template(
+                polygon_path((square_corner, *other_corners)),
+                color=center_color.value,
+            )
+        )
+
+    for i, square_corner in enumerate(square_corners(center, INNER_LENGTH//4)):
+        other_corners = rotate_list(
+            diamond_corners(square_corner, INNER_LENGTH//4),
+            i+1
+        )
+        paths.append(
+            path_template(
+                polygon_path((square_corner, *other_corners[:2])),
+                color=color2.value,
+            )
+        )
+        paths.append(
+            path_template(
+                polygon_path((square_corner, *other_corners[2:])),
+                color=color2.value,
+            )
+        )
+
+    for i, diamond_corner in enumerate(diamond_corners(center, INNER_LENGTH//4)):
+        other_corners = rotate_list(
+            square_corners(diamond_corner, INNER_LENGTH//4),
+            i + 3,
+        )
+    # for i, diamond_corner in enumerate(diamond_corners(center, INNER_LENGTH//2)):
+    #     other_corners = rotate_list(
+    #         square_corners(diamond_corner, INNER_LENGTH//4),
+    #         i + 1,
+    #     )
+
+        paths.append(
+            path_template(
+                polygon_path((diamond_corner, *other_corners[:2])),
+                color=color1.value,
+            )
+        )
+
+    # for i, diamond_corner in enumerate(diamond_corners(center, INNER_LENGTH//4)):
+    #     this_square_corners = rotate_list(
+    #         square_corners(diamond_corner, INNER_LENGTH//4),
+    #         i,
+    #     )
+    #     this_diamond_corners = rotate_list(
+    #         diamond_corners(diamond_corner, INNER_LENGTH // 4),
+    #         i,
+    #     )
+    #     paths.append(
+    #         path_template(
+    #             polygon_path((this_diamond_corners[0], this_square_corners[0], this_diamond_corners[1])),
+    #             color=color2.value,
+    #         )
+    #     )
+    #     paths.append(
+    #         path_template(
+    #             polygon_path((this_diamond_corners[-1], this_square_corners[-1], this_diamond_corners[0])),
+    #             color=color2.value,
+    #         )
+    #     )
 
     with open(filepath, "w") as fh:
         fh.write(

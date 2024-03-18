@@ -1,7 +1,7 @@
-<svg height="1200" width="1200">
-<rect x="0" y="0" width="1200" height="1200" rx="0" fill="#ddddcc"/>
-<rect x="75" y="75" width="1050" height="1050" rx="75" fill="#994936"/>
-<path d="M 300 500 L 328 572 L 400 600 L 328 628 L 300 700 L 272 628 L 200 600 L 272 572 Z" fill="#ddddcc"/>
-<path d="M 600 500 L 628 572 L 700 600 L 628 628 L 600 700 L 572 628 L 500 600 L 572 572 Z" fill="#ddddcc"/>
-<path d="M 900 500 L 928 572 L 1000 600 L 928 628 L 900 700 L 872 628 L 800 600 L 872 572 Z" fill="#ddddcc"/>
+<svg height="2400" width="2400">
+<rect x="0" y="0" width="2400" height="2400" rx="0" fill="#ddddcc"/>
+<rect x="150" y="150" width="2100" height="2100" rx="150" fill="#994936"/>
+<path d="M 600 1000 L 657 1143 L 800 1200 L 657 1257 L 600 1400 L 543 1257 L 400 1200 L 543 1143 Z" fill="#ddddcc"/>
+<path d="M 1200 1000 L 1257 1143 L 1400 1200 L 1257 1257 L 1200 1400 L 1143 1257 L 1000 1200 L 1143 1143 Z" fill="#ddddcc"/>
+<path d="M 1800 1000 L 1857 1143 L 2000 1200 L 1857 1257 L 1800 1400 L 1743 1257 L 1600 1200 L 1743 1143 Z" fill="#ddddcc"/>
 </svg>
