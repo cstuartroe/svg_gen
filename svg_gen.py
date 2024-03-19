@@ -154,10 +154,10 @@ def create_lauvinko_flag():
     tricolors = [
         stripe_color,
         stripe_color,
-        Color.BLACK,
-        Color.BLACK,
-        Color.INDIGO,
-        Color.INDIGO,
+        Color.MEDIUM_BLUE,
+        Color.MEDIUM_BLUE,
+        Color.MEDIUM_BLUE,
+        Color.MEDIUM_BLUE,
         stripe_color,
         stripe_color,
     ]
@@ -185,7 +185,7 @@ def create_lauvinko_flag():
 
     star_points = 8
     star_radius = (height//2)/(2**.5)
-    band_thickness = height*.03
+    band_thickness = height*.035
     star_difference = band_thickness*(2**.5)
     curviness = .12
 

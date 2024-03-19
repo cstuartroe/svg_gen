@@ -105,6 +105,7 @@ class Color(Enum):
     INDIGO = "#003355"
     BP = "#3e008f"
     GOLD = "#ffbb00"
+    MEDIUM_BLUE = "#114488"
     FOREST_GREEN = "#005500"
     PURPLE = "#330055"
     RED = "#661111"
