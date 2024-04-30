@@ -30,7 +30,7 @@ def sun_path(cx, cy, radius):
                 points=8,
                 center=(cx, cy),
                 peak_radius=radius,
-                valley_radius=radius*.6667,
+                valley_radius=radius*.625,
                 askew=math.pi/8,
             )
         ),
@@ -60,8 +60,8 @@ SHAPES = {
 }
 
 
-SIDE_LENGTH = 2400
-BORDER_WIDTH = 150
+SIDE_LENGTH = 2400 # 720
+BORDER_WIDTH = 150 # 40
 CORNER_RADIUS = BORDER_WIDTH
 INNER_LENGTH = SIDE_LENGTH - BORDER_WIDTH*2
 

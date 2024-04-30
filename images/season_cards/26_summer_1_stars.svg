@@ -1,5 +1,5 @@
 <svg height="2400" width="2400">
 <rect x="0" y="0" width="2400" height="2400" rx="0" fill="#ddddcc"/>
-<rect x="150" y="150" width="2100" height="2100" rx="150" fill="#dbb448"/>
+<rect x="150" y="150" width="2100" height="2100" rx="150" fill="#caa02b"/>
 <path d="M 1200 800 L 1313 1087 L 1600 1200 L 1313 1313 L 1200 1600 L 1087 1313 L 800 1200 L 1087 1087 Z" fill="#ddddcc"/>
 </svg>

@@ -112,7 +112,7 @@ class Color(Enum):
     CREAM = "#ddddcc"
 
     SPRING_GREEN = "#478547"
-    SUMMER_GOLD = "#dbb448"
+    SUMMER_GOLD = "#caa02b"
     AUTUMN_RED = "#994936"
     WINTER_BLUE = "#343445"
 

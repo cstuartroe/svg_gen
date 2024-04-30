@@ -1,6 +1,6 @@
 <svg height="2400" width="2400">
 <rect x="0" y="0" width="2400" height="2400" rx="0" fill="#ddddcc"/>
-<rect x="150" y="150" width="2100" height="2100" rx="150" fill="#dbb448"/>
+<rect x="150" y="150" width="2100" height="2100" rx="150" fill="#caa02b"/>
 <path d="M 600 1000 L 657 1143 L 800 1200 L 657 1257 L 600 1400 L 543 1257 L 400 1200 L 543 1143 Z" fill="#ddddcc"/>
 <path d="M 1200 400 L 1257 543 L 1400 600 L 1257 657 L 1200 800 L 1143 657 L 1000 600 L 1143 543 Z" fill="#ddddcc"/>
 <path d="M 1200 1000 L 1257 1143 L 1400 1200 L 1257 1257 L 1200 1400 L 1143 1257 L 1000 1200 L 1143 1143 Z" fill="#ddddcc"/>

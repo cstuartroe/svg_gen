@@ -1,6 +1,6 @@
 <svg height="2400" width="2400">
 <rect x="0" y="0" width="2400" height="2400" rx="0" fill="#ddddcc"/>
-<rect x="150" y="150" width="2100" height="2100" rx="150" fill="#dbb448"/>
+<rect x="150" y="150" width="2100" height="2100" rx="150" fill="#caa02b"/>
 <circle cx="600" cy="1200" r="160.0" fill="#ddddcc"/>
 <circle cx="1200" cy="600" r="160.0" fill="#ddddcc"/>
 <circle cx="1200" cy="1200" r="160.0" fill="#ddddcc"/>
