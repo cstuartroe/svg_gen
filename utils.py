@@ -116,6 +116,8 @@ class Color(Enum):
     AUTUMN_RED = "#994936"
     WINTER_BLUE = "#343445"
 
+    BLUE_GRAY = "#202027"
+
 
 def path_template(vertex_string, color):
     return f'<path d="{vertex_string}" fill="{color}"/>'
@@ -123,6 +125,10 @@ def path_template(vertex_string, color):
 
 def rounded_rectangle_template(x, y, width, height, radius, color):
     return f'<rect x="{x}" y="{y}" width="{width}" height="{height}" rx="{radius}" fill="{color}"/>'
+
+
+def rectangle_template(x, y, width, height, color):
+    return rounded_rectangle_template(x, y, width, height, 0, color)
 
 
 def circle_template(cx, cy, radius, color):
