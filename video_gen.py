@@ -5,7 +5,8 @@ from PIL import Image, ImageDraw, ImageFont
 import cv2
 
 
-MajorMono = ImageFont.truetype("font/MajorMonoDisplay-Regular.ttf", 30)
+SyneMono = ImageFont.truetype("font/SyneMono-Regular.ttf", 200)
+KodeMono = ImageFont.truetype("font/KodeMono-VariableFont_wght.ttf", 200)
 BungeeHairline = ImageFont.truetype("font/BungeeHairline-Regular.ttf", 200)
 
 
@@ -39,7 +40,7 @@ def chroma_promo():
                 (x, y),
                 text=c,
                 fill="#ffffff",
-                font=BungeeHairline,
+                font=KodeMono,
                 anchor="mm",
             )
 
@@ -56,38 +57,27 @@ def chroma_promo():
         (0, 127, 255),
     )
     light_distance_decay = 60
-    light_delay = 3
-    light_time_increase = .005
-    light_starting_proportion = .3
-    frame_resolution = 1
 
-    for frame in tqdm(range(0, 300, frame_resolution)):
-        imtemp = img.copy()
+    imtemp = img.copy()
 
-        for i, color in enumerate(colors):
-            kx = (2*(i%3) + 1)*SIDE_LENGTH/6
-            ky = 0 if i < 3 else SIDE_LENGTH - 2
+    for i, color in enumerate(colors):
+        kx = (2*(i%3) + 1)*SIDE_LENGTH/6
+        ky = 0 if i < 3 else SIDE_LENGTH - 2
 
-            frames_from_switch_on = frame - light_delay*i
-            if frames_from_switch_on > 0:
-                kernel_brightness_fraction = (
-                    light_starting_proportion + (light_time_increase * frames_from_switch_on)
-                )
-            else:
-                kernel_brightness_fraction = 0
+        kernel_brightness_fraction = 1
 
-            for x in range(SIDE_LENGTH-1):
-                for y in range(SIDE_LENGTH-1):
-                    r, g, b = imtemp.getpixel((x, y))
-                    distance = math.sqrt((x - kx)**2 + (y - ky)**2)
-                    brightness_fraction = kernel_brightness_fraction * (2**(-distance/light_distance_decay))
+        for x in range(SIDE_LENGTH-1):
+            for y in range(SIDE_LENGTH-1):
+                r, g, b = imtemp.getpixel((x, y))
+                distance = math.sqrt((x - kx)**2 + (y - ky)**2)
+                brightness_fraction = kernel_brightness_fraction * (2**(-distance/light_distance_decay))
 
-                    r += round(color[0]*brightness_fraction)
-                    g += round(color[1]*brightness_fraction)
-                    b += round(color[2]*brightness_fraction)
-                    imtemp.putpixel((x, y), (r, g, b))
+                r += round(color[0]*brightness_fraction)
+                g += round(color[1]*brightness_fraction)
+                b += round(color[2]*brightness_fraction)
+                imtemp.putpixel((x, y), (r, g, b))
 
-        write_image(imtemp, frame_resolution)
+    write_image(imtemp, 300)
 
     video.release()
 
