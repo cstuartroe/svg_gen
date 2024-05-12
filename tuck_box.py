@@ -20,7 +20,7 @@ TMP_PNG_PATH = "temp.png"
 Domine = ImageFont.truetype("font/Domine-VariableFont_wght.ttf", 30)
 OpenSans = ImageFont.truetype("font/OpenSans-VariableFont_wdth,wght.ttf", 12)
 
-SEASON_SIDES: list[tuple[tuple[int, int, int, int], Color, int]] = [
+SEASON_SIDES: list[tuple[tuple[int, int, int, int], Color, int, tuple[int, int, int, int]]] = [
     (
         (
             LEFT_OFFSET,
@@ -30,16 +30,7 @@ SEASON_SIDES: list[tuple[tuple[int, int, int, int], Color, int]] = [
         ),
         Color.AUTUMN_RED,
         0,
-    ),
-    (
-        (
-            LEFT_OFFSET + BOX_WIDTH,
-            TOP_OFFSET,
-            BOX_THICKNESS,
-            BOX_WIDTH,
-        ),
-        Color.WINTER_BLUE,
-        90,
+        (-20, 0, 20, 40),
     ),
     (
         (
@@ -50,6 +41,18 @@ SEASON_SIDES: list[tuple[tuple[int, int, int, int], Color, int]] = [
         ),
         Color.SPRING_GREEN,
         0,
+        (-20, -40, 20, 0),
+    ),
+    (
+        (
+            LEFT_OFFSET + BOX_WIDTH,
+            TOP_OFFSET,
+            BOX_THICKNESS,
+            BOX_WIDTH,
+        ),
+        Color.WINTER_BLUE,
+        90,
+        (0, -70, 0, 70),
     ),
     (
         (
@@ -60,6 +63,7 @@ SEASON_SIDES: list[tuple[tuple[int, int, int, int], Color, int]] = [
         ),
         Color.SUMMER_GOLD,
         270,
+        (0, -70, 20, 70),
     ),
 ]
 
@@ -100,9 +104,15 @@ if __name__ == "__main__":
             [f(radius, radius, radius)],
         )
 
-    for dim, color, rot in SEASON_SIDES:
+    for dim, color, rot, adjustments in SEASON_SIDES:
         x, y, width, height = dim
         box = (x, y, x+width, y+height)
+
+        bigger_box = tuple(map(
+            lambda pair: sum(pair),
+            zip(box, adjustments),
+        ))
+        draw.rectangle(bigger_box, color.value)
 
         txt = Image.new("RGBA", (BOX_WIDTH, BOX_THICKNESS), color.value)
         txt_draw = ImageDraw.Draw(txt)
