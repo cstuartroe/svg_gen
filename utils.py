@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import math
 from enum import Enum
 
@@ -119,21 +120,41 @@ class Color(Enum):
     BLUE_GRAY = "#202027"
 
 
+@dataclass
+class Rotation:
+    degrees: int
+    cx: int
+    cy: int
+
+
 def path_template(vertex_string, color):
     return f'<path d="{vertex_string}" fill="{color}"/>'
 
 
-def rounded_rectangle_template(x, y, width, height, radius, color):
-    return f'<rect x="{x}" y="{y}" width="{width}" height="{height}" rx="{radius}" fill="{color}"/>'
+def rectangle_template(x: int, y: int, width: int, height: int, color: str, radius: int = 0, rotation: Rotation | None = None):
+    fields = {
+        "x": x,
+        "y": y,
+        "width": width,
+        "height": height,
+        "rx": radius,
+        "fill": color,
+    }
+    if rotation:
+        fields["transform"] = f"rotate({rotation.degrees}, {rotation.cx}, {rotation.cy})"
 
+    param_strings = []
+    for key, value in fields.items():
+        param_strings.append(f"{key}=\"{value}\"")
 
-def rectangle_template(x, y, width, height, color):
-    return rounded_rectangle_template(x, y, width, height, 0, color)
+    return f'<rect {" ".join(param_strings)}/>'
 
 
 def circle_template(cx, cy, radius, color):
     return f'<circle cx="{cx}" cy="{cy}" r="{radius}" fill="{color}"/>'
 
 
-def svg_template(width, height, paths):
+def svg_template(width, height, paths, background_color=None):
+    if background_color:
+        paths = [f'<rect width="100%" height="100%" fill="{background_color}"/>'] + paths
     return f'<svg height="{height}" width="{width}">\n' + "\n".join(paths) + '\n</svg>'
