@@ -58,10 +58,12 @@ class Bond:
 PADDING = 50
 ATOM_RADIUS = 20
 BOND_THICKNESS = 6
-BOND_COLOR = "#ffffff"
 BOND_LENGTH = 100
 BOND_SPACING = 16
 ROOT3OVER2 = (3**.5)/2
+
+BOND_COLOR = "#ffffff"
+BACKGROUND_COLOR = "black"
 
 
 def molecule_svg(leftmost_atom: Atom, height: int, starting_height: int):
@@ -117,7 +119,7 @@ def molecule_svg(leftmost_atom: Atom, height: int, starting_height: int):
         rightmost + PADDING,
         height,
         paths,
-        background_color="black"
+        background_color=BACKGROUND_COLOR
     )
 
 
@@ -179,6 +181,15 @@ def isoleucine():
     return carbons[0]
 
 
+def lysine():
+    carbons = [Atom(Element.CARBON) for _ in range(4)]
+    Bond((carbons[0], carbons[1]), 120)
+    Bond((carbons[1], carbons[2]), 180)
+    Bond((carbons[2], carbons[3]), 120)
+    Bond((carbons[3], Atom(Element.NITROGEN)), 180)
+    return carbons[0]
+
+
 def leucine():
     carbons = [Atom(Element.CARBON) for _ in range(4)]
     Bond((carbons[0], carbons[1]), 120)
@@ -218,6 +229,13 @@ def pyrrolycine():
     return carbons[0]
 
 
+def phenylalanine():
+    C = Atom(Element.CARBON)
+    PH = phenyl()
+    Bond((C, PH[5]), 120)
+    return C
+
+
 def arginine():
     carbons = [Atom(Element.CARBON) for _ in range(4)]
     nitrogens = [Atom(Element.NITROGEN) for _ in range(3)]
@@ -248,8 +266,10 @@ AMINO_ACIDS = {
     "A": alanine,
     "C": cysteine,
     "E": glutamic_acid,
+    "F": phenylalanine,
     "G": glycine,
     "I": isoleucine,
+    "K": lysine,
     "L": leucine,
     "N": asparigine,
     "O": pyrrolycine,
