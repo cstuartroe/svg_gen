@@ -1,6 +1,6 @@
 import math
 from tqdm import tqdm
-from pydub import AudioSegment
+# from pydub import AudioSegment
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 import cv2
@@ -10,23 +10,27 @@ SyneMono = ImageFont.truetype("font/SyneMono-Regular.ttf", 200)
 KodeMono = ImageFont.truetype("font/KodeMono-VariableFont_wght.ttf", 200)
 BungeeHairline = ImageFont.truetype("font/BungeeHairline-Regular.ttf", 200)
 
-Keystroke = AudioSegment.from_file("audio/typewriter.wav")
-Keyboard = AudioSegment.from_file("audio/mechanical-keyboard.mp3")
-Click = AudioSegment.from_file("audio/click-button.mp3")
-Logo = AudioSegment.from_file("audio/futuristic-logo.mp3")
-Woosh = AudioSegment.from_file("audio/ethereal-woosh.wav")
+# Keystroke = AudioSegment.from_file("audio/typewriter.wav")
+# Keyboard = AudioSegment.from_file("audio/mechanical-keyboard.mp3")
+# Click = AudioSegment.from_file("audio/click-button.mp3")
+# Logo = AudioSegment.from_file("audio/futuristic-logo.mp3")
+# Woosh = AudioSegment.from_file("audio/ethereal-woosh.wav")
 
 SAMPLE_RATE = 44100
+SIDE_LENGTH = 1000
+FRAMERATE = 50
+
+text_lines = ["DVLV 9", "CHROMA"]
+horizontal_spacing = 120
+vertical_spacing = 200
 
 
 def chroma_promo():
-    SIDE_LENGTH = 1000
-    FRAMERATE = 50
 
     videodims = (SIDE_LENGTH-1,SIDE_LENGTH-1)
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
     video = cv2.VideoWriter("videos/chroma_promo.mp4", fourcc, FRAMERATE, videodims)
-    audio = AudioSegment.silent(10000, frame_rate=SAMPLE_RATE)
+    # audio = AudioSegment.silent(10000, frame_rate=SAMPLE_RATE)
     img = Image.new('RGB', videodims, color = 'black')
 
     total_frames = 0
@@ -42,15 +46,11 @@ def chroma_promo():
 
     draw = ImageDraw.Draw(img)
 
-    text_lines = ["DVLV 9", "CHROMA"]
-    horizontal_spacing = 120
-    vertical_spacing = 200
-
     for i, line in enumerate(text_lines):
         # line_start_frames = total_frames
 
         for j, c in enumerate(line):
-            audio = audio.overlay(Click, total_frames * 1000 / FRAMERATE)
+            # audio = audio.overlay(Click, total_frames * 1000 / FRAMERATE)
 
             x = SIDE_LENGTH/2 + (-len(line) + 1 + 2*j)*horizontal_spacing/2
             y = SIDE_LENGTH/2 + (-len(text_lines) + 1 + 2*i)*vertical_spacing/2
@@ -76,7 +76,10 @@ def chroma_promo():
 
         write_image(img, 50)
 
-    audio = audio.overlay(Logo, total_frames*1000/FRAMERATE - 700)
+    img.save("pngs/dvlv9.png")
+    print("Saved png")
+
+    # audio = audio.overlay(Logo, total_frames*1000/FRAMERATE - 700)
 
     colors = [
         ((255, 0, 0), (63, 0, 0)),
@@ -141,8 +144,47 @@ def chroma_promo():
     write_image(date_img, 130)
 
     video.release()
-    audio.export("audio/chroma_promo.wav")
+    # audio.export("audio/chroma_promo.wav")
+
+
+def chroma_backdrop():
+    tile_width = 4
+    tile_height = 8
+
+    dims = SIDE_LENGTH*tile_width, SIDE_LENGTH*tile_height
+
+    img = Image.new('RGB', dims, color='black')
+    draw = ImageDraw.Draw(img)
+
+    for tx in range(tile_width):
+        for ty in range(tile_height):
+            if (tx + ty) % 2 != 0:
+                continue
+
+            for i, line in enumerate(text_lines):
+                for j, c in enumerate(line):
+
+                    x = (
+                            tx * SIDE_LENGTH
+                            + SIDE_LENGTH / 2
+                            + (-len(line) + 1 + 2 * j) * horizontal_spacing / 2
+                    )
+                    y = (
+                            ty * SIDE_LENGTH
+                            + SIDE_LENGTH / 2
+                            + (-len(text_lines) + 1 + 2 * i) * vertical_spacing / 2
+                    )
+
+                    draw.text(
+                        (x, y),
+                        text=c,
+                        fill="#ffffff",
+                        font=BungeeHairline,
+                        anchor="mm",
+                    )
+
+    img.save(f"pngs/chroma_backdrop_{tile_width}x{tile_height}.png")
 
 
 if __name__ == "__main__":
-    chroma_promo()
+    chroma_backdrop()
