@@ -1,3 +1,5 @@
+import random
+
 from utils import *
 
 
@@ -325,6 +327,45 @@ def create_lauvinko_tricolor(width: int = 1800, height: int = 1200):
         )
 
 
+def create_jaobon_flag(wavy=False):
+    paths = []
+    # colors = [Color.JAOBON_PURPLE.value, Color.JAOBON_BROWN.value, Color.JAOBON_GREEN.value]
+    c1, c2, c3 = (
+        # [hex(random.randrange(256))[2:].rjust(2, '0'), hex(random.randrange(256))[2:].rjust(2, '0'), hex(random.randrange(256))[2:].rjust(2, '0')]
+        # ['ff', 'aa', '00']  # Halloween
+        ['88', '66', 'cc']  # Jaobon flag
+        # ['aa', 'ff', '00']  # BRAT green
+        # ['ff', '00', '00']  # RGB
+    )
+    colors = [f"#{c1}{c2}{c3}", f"#{c3}{c1}{c2}", f"#{c2}{c3}{c1}"]
+
+    width = 3
+    height = 2
+    side_length = 1200 if max(width, height) <= 3 else 240
+
+    for i in range(width):
+        for j in range(height):
+            paths.append(rectangle_template(side_length*i, side_length*j, side_length, side_length, color=colors[(i+j) % 3]))
+
+    for i in range(width*2 + 1):
+        for j in range(height*2 + 1):
+            if ((i + j) % 2 == 0) and not wavy:
+                continue
+
+            r = side_length//4 if wavy else side_length//6
+            paths.append(circle_template(i*side_length//2, j*side_length//2, r, colors[(-i + j + 1) % 3]))
+
+    with open(f"images/jaobon_flag_{colors[0][1:]}_{'wavy' if wavy else 'puzzle'}_{width}x{height}.svg", "w") as fh:
+        fh.write(
+            svg_template(
+                side_length*width,
+                side_length*height,
+                paths,
+                background_color="white",
+            ),
+        )
+
+
 if __name__ == "__main__":
     create_rasta_flower()
     create_trippy_lotus()
@@ -332,3 +373,4 @@ if __name__ == "__main__":
     create_rub_el_hizb_black_solid()
     create_lauvinko_flag()
     create_lauvinko_tricolor()
+    create_jaobon_flag()
