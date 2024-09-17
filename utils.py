@@ -119,10 +119,6 @@ class Color(Enum):
 
     BLUE_GRAY = "#202027"
 
-    JAOBON_PURPLE = "#8866cc"
-    JAOBON_GREEN = "#66cc88"
-    JAOBON_BROWN = "#cc8866"
-
 
 @dataclass
 class Rotation:

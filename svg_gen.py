@@ -1,4 +1,5 @@
 import random
+import colorsys
 
 from utils import *
 
@@ -327,17 +328,29 @@ def create_lauvinko_tricolor(width: int = 1800, height: int = 1200):
         )
 
 
+def percent_to_hex(p: float):
+    return hex(round(p*255))[2:].rjust(2, '0')
+
+
+def hsv_to_hex(h, s, v):
+    r, g, b = colorsys.hsv_to_rgb(h/360, s, v)
+    return f"#{percent_to_hex(r)}{percent_to_hex(g)}{percent_to_hex(b)}"
+
+
 def create_jaobon_flag(wavy=False):
     paths = []
-    # colors = [Color.JAOBON_PURPLE.value, Color.JAOBON_BROWN.value, Color.JAOBON_GREEN.value]
-    c1, c2, c3 = (
-        # [hex(random.randrange(256))[2:].rjust(2, '0'), hex(random.randrange(256))[2:].rjust(2, '0'), hex(random.randrange(256))[2:].rjust(2, '0')]
-        # ['ff', 'aa', '00']  # Halloween
-        ['88', '66', 'cc']  # Jaobon flag
-        # ['aa', 'ff', '00']  # BRAT green
-        # ['ff', '00', '00']  # RGB
-    )
-    colors = [f"#{c1}{c2}{c3}", f"#{c3}{c1}{c2}", f"#{c2}{c3}{c1}"]
+    h1 = 260  # random.randrange(360)
+    s1 = .5  # random.random()
+    v1 = .8  # random.random()
+    h2 = (h1 - 60) % 360
+    s2 = .4  # random.random()
+    v2 = 1.0  # random.random()
+    h3 = (h1 - 120) % 360
+    colors = [
+        hsv_to_hex(h1, s1, v1),
+        hsv_to_hex(h2, s2, v2),
+        hsv_to_hex(h3, s1, v1),
+    ]
 
     width = 3
     height = 2
