@@ -1,5 +1,6 @@
 import random
 import colorsys
+import math
 
 from utils import *
 
@@ -337,6 +338,46 @@ def hsv_to_hex(h, s, v):
     return f"#{percent_to_hex(r)}{percent_to_hex(g)}{percent_to_hex(b)}"
 
 
+def create_color_scheme():
+    side_length = 600
+    distance_from_center = 200
+    radius = 50
+    circle_size = 6
+
+    s1 = .5  # 1.0
+    v1 = .8  # random.random()
+    s2 = .4  # random.random()/2 + .5
+    v2 = 1.0  # random.random()
+    h_start = 260  # random.randrange(360)
+
+    paths = []
+    for i in range(circle_size):
+        if i % 2 == 0:
+            s, v = s1, v1
+        else:
+            s, v = s2, v2
+        h = (h_start - i*(360//circle_size)) % 360
+        # print(hsv_to_hex(h, s, v))
+        paths.append(
+            circle_template(
+                side_length//2 + math.cos(math.pi*i*2/circle_size)*distance_from_center,
+                side_length//2 + math.sin(math.pi*i*2/circle_size)*distance_from_center,
+                radius,
+                hsv_to_hex(h, s, v),
+            )
+        )
+
+    with open("images/color_scheme.svg", "w") as fh:
+        fh.write(
+            svg_template(
+                side_length,
+                side_length,
+                paths,
+                background_color="black",
+            )
+        )
+
+
 def create_jaobon_flag(wavy=False):
     paths = []
     h1 = 260  # random.randrange(360)
@@ -387,3 +428,4 @@ if __name__ == "__main__":
     create_lauvinko_flag()
     create_lauvinko_tricolor()
     create_jaobon_flag()
+    create_color_scheme()
