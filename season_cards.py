@@ -62,9 +62,9 @@ SHAPES = {
     "star": star_path,
 }
 
-
-SIDE_LENGTH = 2400 # 720
-BORDER_WIDTH = 150 # 40
+EM = 50  # 15
+SIDE_LENGTH = 48 * EM
+BORDER_WIDTH = 3 * EM
 CORNER_RADIUS = BORDER_WIDTH
 INNER_LENGTH = SIDE_LENGTH - BORDER_WIDTH*2
 
@@ -124,39 +124,39 @@ WATERMARKS: dict[Season, SeasonWatermark] = {
         # See comment in tessellating_clover_paths. There's some constraint that I failed to figure out, so I
         # arrived at these numbers by some trial and error.
         curves=lambda x, y, color: [
-            f'<path d="{path}" stroke="{color}" stroke-width="10" fill="none" mask="url(#bodymask)"/>'
-            for path in tessellating_clover_paths(x, y, math.pi * .6, math.pi * .1205, 120, 60)
+            f'<path d="{path}" stroke="{color}" stroke-width="{.2*EM}" fill="none" mask="url(#bodymask)"/>'
+            for path in tessellating_clover_paths(x, y, math.pi * .6, math.pi * .1205, 2.4*EM, 1.2*EM)
         ] + [
-            f'<path d="{path}" stroke="{color}" stroke-width="10" fill="none" mask="url(#bodymask)"/>'
-            for path in tessellating_clover_paths(x + 150, y + 87.5, math.pi * .6, math.pi * .1205, 120, 60)
+            f'<path d="{path}" stroke="{color}" stroke-width="{.2*EM}" fill="none" mask="url(#bodymask)"/>'
+            for path in tessellating_clover_paths(x + 3*EM, y + 1.75*EM, math.pi * .6, math.pi * .1205, 2.4*EM, 1.2*EM)
         ],
-        width=300,
-        height=175,
+        width=round(6*EM),
+        height=round(3.5*EM),
     ),
     Season.SUMMER: SeasonWatermark(
         curves=lambda x, y, color: [
-            f'<path d="{hexagon_path(x, y, 60)}" stroke="{color}" stroke-width="10" fill="none" mask="url(#bodymask)"/>',
-            f'<path d="{hexagon_path(x+90, y+round(30*math.sqrt(3)), 60)}" stroke="{color}" stroke-width="10" fill="none" mask="url(#bodymask)"/>',
+            f'<path d="{hexagon_path(x, y, 1.2*EM)}" stroke="{color}" stroke-width="{.2*EM}" fill="none" mask="url(#bodymask)"/>',
+            f'<path d="{hexagon_path(x + 1.8*EM, y + .6*EM*math.sqrt(3), 1.2*EM)}" stroke="{color}" stroke-width="{.2*EM}" fill="none" mask="url(#bodymask)"/>',
         ],
-        width=180,
-        height=round(60*math.sqrt(3)),
+        width=round(3.6*EM),
+        height=round(1.2*EM*math.sqrt(3)),
     ),
     Season.AUTUMN: SeasonWatermark(
         curves=lambda x, y, color: [
-            f'<path d="{leaf_path(x, y, 120, 30)}" stroke="{color}" stroke-width="10" fill="none" mask="url(#bodymask)"/>',
+            f'<path d="{leaf_path(x, y, 2.4*EM, .6*EM)}" stroke="{color}" stroke-width="{.2*EM}" fill="none" mask="url(#bodymask)"/>',
             # f'<line x1="{x}" y1="{y}" x2="{x+300}" y2="{y}" stroke="{color}" stroke-width="10" fill="none" mask="url(#bodymask)"/>',
             # f'<line x1="{x+150}" y1="{y+40}" x2="{x+450}" y2="{y+40}" stroke="{color}" stroke-width="10" fill="none" mask="url(#bodymask)"/>',
         ],
-        width=240,
-        height=60,
+        width=round(4.8*EM),
+        height=round(1.2*EM),
     ),
     Season.WINTER: SeasonWatermark(
         curves=lambda x, y, color: [
-            f'<path d="M{x} {y}A40 40 0 0 0 {x+50} {y} 40 40 0 0 1 {x+100} {y} 40 40 0 0 0 {x+50} {y} 40 40 0 0 1 {x} {y}" stroke="{color}" stroke-width="10" fill="none" mask="url(#bodymask)"/>',
-            f'<path d="M{x+50} {y+80}A40 40 0 0 0 {x+100} {y+80} 40 40 0 0 1 {x+150} {y+80} 40 40 0 0 0 {x+100} {y+80} 40 40 0 0 1 {x+50} {y+80} " stroke="{color}" stroke-width="10" fill="none" mask="url(#bodymask)"/>',
+            f'<path d="M{x} {y}A{.8*EM} {.8*EM} 0 0 0 {x+EM} {y} {.8*EM} {.8*EM} 0 0 1 {x+2*EM} {y} {.8*EM} {.8*EM} 0 0 0 {x+EM} {y} {.8*EM} {.8*EM} 0 0 1 {x} {y}" stroke="{color}" stroke-width="{.2*EM}" fill="none" mask="url(#bodymask)"/>',
+            f'<path d="M{x+EM} {y+1.6*EM}A{.8*EM} {.8*EM} 0 0 0 {x+2*EM} {y+1.6*EM} {.8*EM} {.8*EM} 0 0 1 {x+3*EM} {y+1.6*EM} {.8*EM} {.8*EM} 0 0 0 {x+2*EM} {y+1.6*EM} {.8*EM} {.8*EM} 0 0 1 {x+EM} {y+1.6*EM} " stroke="{color}" stroke-width="{.2*EM}" fill="none" mask="url(#bodymask)"/>',
         ],
-        width=100,
-        height=160,
+        width=round(2*EM),
+        height=round(3.2*EM),
     ),
 }
 
