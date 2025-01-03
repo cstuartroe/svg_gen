@@ -1,3 +1,4 @@
+import os
 import sys
 import math
 from dataclasses import dataclass
@@ -302,6 +303,7 @@ class AminoAcid:
 
 
 def generate_peptide(letters: str):
+    os.makedirs("images/peptides", exist_ok=True)
     curr_amino = AminoAcid.from_letter_code(letters[0])
     leftmost_atom = curr_amino.N
 

@@ -1,3 +1,4 @@
+import os
 from dataclasses import dataclass
 from utils import *
 
@@ -108,6 +109,8 @@ NUMBERS = [
 
 
 def make_season_cards():
+    os.makedirs("images/season_cards", exist_ok=True)
+
     i = 0
     for season in Season:
         for shape_name, shape_function in SHAPES.items():
@@ -120,14 +123,14 @@ def make_season_cards():
 
                 paths = []
                 paths.append(
-                    rounded_rectangle_template(
+                    rectangle_template(
                         0, 0, SIDE_LENGTH, SIDE_LENGTH,
                         radius=0,
                         color=Color.CREAM.value,
                     )
                 )
                 paths.append(
-                    rounded_rectangle_template(
+                    rectangle_template(
                         BORDER_WIDTH,
                         BORDER_WIDTH,
                         SIDE_LENGTH - 2*BORDER_WIDTH,
@@ -184,7 +187,7 @@ def make_back():
 
     paths = []
     paths.append(
-        rounded_rectangle_template(
+        rectangle_template(
             0, 0, SIDE_LENGTH, SIDE_LENGTH,
             radius=0,
             color=Color.BLACK.value,
@@ -197,7 +200,7 @@ def make_back():
     color2 = Color.AUTUMN_RED
 
     paths.append(
-        rounded_rectangle_template(
+        rectangle_template(
             BORDER_WIDTH, BORDER_WIDTH, INNER_LENGTH, INNER_LENGTH,
             radius=CORNER_RADIUS,
             color=corner_color.value,
