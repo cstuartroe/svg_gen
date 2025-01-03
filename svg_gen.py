@@ -1,7 +1,3 @@
-import random
-import colorsys
-import math
-
 from utils import *
 
 
@@ -327,15 +323,6 @@ def create_lauvinko_tricolor(width: int = 1800, height: int = 1200):
                 rects,
             )
         )
-
-
-def percent_to_hex(p: float):
-    return hex(round(p*255))[2:].rjust(2, '0')
-
-
-def hsv_to_hex(h, s, v):
-    r, g, b = colorsys.hsv_to_rgb(h/360, s, v)
-    return f"#{percent_to_hex(r)}{percent_to_hex(g)}{percent_to_hex(b)}"
 
 
 def create_color_scheme():

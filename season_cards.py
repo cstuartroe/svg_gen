@@ -1,5 +1,7 @@
 import os
 from dataclasses import dataclass
+from typing import Callable
+
 from utils import *
 
 CARDS_DIR = "images/season_cards"
@@ -21,7 +23,7 @@ SEASON_COLORS: dict[Season, Color] = {
 
 
 def moon_path(cx, cy, radius):
-    return circle_template(cx, cy, radius*.8, Color.CREAM.value)
+    return crescent_moon_template(cx, cy, radius*.8, Color.CREAM.value, 45)
 
 
 def sun_path(cx, cy, radius):
@@ -79,6 +81,8 @@ QUARTER = SIDE_LENGTH//4
 HALF = SIDE_LENGTH//2
 THREE_QUARTER = 3*SIDE_LENGTH//4
 
+WATERMARK_SATURATION = .2
+
 NUMBERS = [
     NumberInfo(LARGE, [
         (HALF, HALF),
@@ -88,9 +92,9 @@ NUMBERS = [
         (THREE_QUARTER, HALF),
     ]),
     NumberInfo(SMALL, [
-        (QUARTER, HALF),
+        (QUARTER, QUARTER),
         (HALF, HALF),
-        (THREE_QUARTER, HALF),
+        (THREE_QUARTER, THREE_QUARTER),
     ]),
     NumberInfo(SMALL, [
         (QUARTER, HALF),
@@ -99,13 +103,62 @@ NUMBERS = [
         (HALF, THREE_QUARTER),
     ]),
     NumberInfo(SMALL, [
-        (QUARTER, HALF),
-        (HALF, QUARTER),
+        (QUARTER, QUARTER),
+        (QUARTER, THREE_QUARTER),
         (HALF, HALF),
-        (THREE_QUARTER, HALF),
-        (HALF, THREE_QUARTER),
+        (THREE_QUARTER, QUARTER),
+        (THREE_QUARTER, THREE_QUARTER),
     ]),
 ]
+
+
+@dataclass
+class SeasonWatermark:
+    curves: Callable[[int, int, str], list[str]]
+    width: int
+    height: int
+
+
+WATERMARKS: dict[Season, SeasonWatermark] = {
+    Season.SPRING: SeasonWatermark(
+        # See comment in tessellating_clover_paths. There's some constraint that I failed to figure out, so I
+        # arrived at these numbers by some trial and error.
+        curves=lambda x, y, color: [
+            f'<path d="{path}" stroke="{color}" stroke-width="10" fill="none" mask="url(#bodymask)"/>'
+            for path in tessellating_clover_paths(x, y, math.pi * .6, math.pi * .1205, 120, 60)
+        ] + [
+            f'<path d="{path}" stroke="{color}" stroke-width="10" fill="none" mask="url(#bodymask)"/>'
+            for path in tessellating_clover_paths(x + 150, y + 87.5, math.pi * .6, math.pi * .1205, 120, 60)
+        ],
+        width=300,
+        height=175,
+    ),
+    Season.SUMMER: SeasonWatermark(
+        curves=lambda x, y, color: [
+            f'<path d="{hexagon_path(x, y, 60)}" stroke="{color}" stroke-width="10" fill="none" mask="url(#bodymask)"/>',
+            f'<path d="{hexagon_path(x+90, y+round(30*math.sqrt(3)), 60)}" stroke="{color}" stroke-width="10" fill="none" mask="url(#bodymask)"/>',
+        ],
+        width=180,
+        height=round(60*math.sqrt(3)),
+    ),
+    Season.AUTUMN: SeasonWatermark(
+        curves=lambda x, y, color: [
+            f'<path d="{leaf_path(x, y, 120, 30)}" stroke="{color}" stroke-width="10" fill="none" mask="url(#bodymask)"/>',
+            # f'<line x1="{x}" y1="{y}" x2="{x+300}" y2="{y}" stroke="{color}" stroke-width="10" fill="none" mask="url(#bodymask)"/>',
+            # f'<line x1="{x+150}" y1="{y+40}" x2="{x+450}" y2="{y+40}" stroke="{color}" stroke-width="10" fill="none" mask="url(#bodymask)"/>',
+        ],
+        width=240,
+        height=60,
+    ),
+    Season.WINTER: SeasonWatermark(
+        curves=lambda x, y, color: [
+            f'<path d="M{x} {y}A40 40 0 0 0 {x+50} {y} 40 40 0 0 1 {x+100} {y} 40 40 0 0 0 {x+50} {y} 40 40 0 0 1 {x} {y}" stroke="{color}" stroke-width="10" fill="none" mask="url(#bodymask)"/>',
+            f'<path d="M{x+50} {y+80}A40 40 0 0 0 {x+100} {y+80} 40 40 0 0 1 {x+150} {y+80} 40 40 0 0 0 {x+100} {y+80} 40 40 0 0 1 {x+50} {y+80} " stroke="{color}" stroke-width="10" fill="none" mask="url(#bodymask)"/>',
+        ],
+        width=100,
+        height=160,
+    ),
+}
 
 
 def make_season_cards():
@@ -139,6 +192,35 @@ def make_season_cards():
                         color=SEASON_COLORS[season].value,
                     )
                 )
+
+                if season in WATERMARKS:
+                    mask = f"""
+                        <mask id="bodymask">
+                            {rectangle_template(
+                                0,
+                                0,
+                                SIDE_LENGTH,
+                                SIDE_LENGTH,
+                                radius=0,
+                                color="black",
+                            )}
+                            {rectangle_template(
+                                BORDER_WIDTH,
+                                BORDER_WIDTH,
+                                SIDE_LENGTH - 2*BORDER_WIDTH,
+                                SIDE_LENGTH - 2*BORDER_WIDTH,
+                                radius=CORNER_RADIUS,
+                                color="white",
+                            )}
+                        </mask>
+                    """
+                    paths.append(mask)
+
+                    watermark = WATERMARKS[season]
+                    watermark_color = mix_hex_colors(Color.CREAM.value, SEASON_COLORS[season].value, .2)
+                    for x in range(0, SIDE_LENGTH, watermark.width):
+                        for y in range(0, SIDE_LENGTH, watermark.height):
+                            paths += watermark.curves(x, y, watermark_color)
 
                 for cx, cy in number_info.centers:
                     paths.append(

@@ -1,6 +1,43 @@
+import colorsys
 from dataclasses import dataclass
-import math
 from enum import Enum
+import math
+
+
+def percent_to_hex(p: float):
+    return hex(round(p*255))[2:].rjust(2, '0')
+
+
+def hsv_to_hex(h, s, v):
+    r, g, b = colorsys.hsv_to_rgb(h/360, s, v)
+    return f"#{percent_to_hex(r)}{percent_to_hex(g)}{percent_to_hex(b)}"
+
+
+def hex_to_rgb(h: str):
+    return tuple(int(h[i:i+2], 16) for i in range(1, 7, 2))
+
+
+def rgb_to_hex(c):
+    r, g, b = c
+    return f"#{r:02x}{g:02x}{b:02x}"
+
+
+def mix(n1, n2, percent: float):
+    assert 0 <= percent
+    assert percent <= 1
+
+    return n1*percent + n2*(1-percent)
+
+
+def mix_rgb_colors(c1, c2, percent: float):
+    r1, g1, b1 = c1
+    r2, g2, b2 = c2
+
+    return round(mix(r1, r2, percent)), round(mix(g1, g2, percent)), round(mix(b1, b2, percent))
+
+
+def mix_hex_colors(hex1: str, hex2: str, percent: float):
+    return rgb_to_hex(mix_rgb_colors(hex_to_rgb(hex1), hex_to_rgb(hex2), percent))
 
 
 def star_peaks_valleys(points, center, peak_radius, valley_radius, askew):
@@ -100,6 +137,73 @@ def rectangle_path(x, y, width, height):
     ])
 
 
+def hexagon_path(x, y, side_length):
+    short_side = side_length/2
+    half_height = side_length*math.sqrt(3)/2
+
+    return polygon_path([
+        (x, y),
+        (x + side_length, y),
+        (x + side_length + short_side, y + half_height),
+        (x + side_length, y + 2*half_height),
+        (x, y + 2*half_height),
+        (x - short_side, y + half_height),
+    ])
+
+
+def leaf_control(start_x, start_y, end_x, end_y):
+    mid_x = (start_x + end_x)/2
+    return f"C{mid_x},{start_y} {mid_x},{end_y} {end_x},{end_y}"
+
+
+def leaf_path(x, y, width, height):
+    points = [(x, y), (x + width, y - height), (x + 2*width, y), (x + width, y + height), (x, y)]
+
+    out = f"M{x},{y}"
+    for i in range(4):
+        (start_x, start_y), (end_x, end_y) = points[i:i+2]
+        out += " " + leaf_control(start_x, start_y, end_x, end_y)
+
+    return out + "Z"
+
+
+def tessellating_clover_paths(x, y, E, F, radius, curve_radius):
+    """E + F < math.pi; F < math.pi/2; curve_radius << radius"""
+
+    # This is missing some important constraint, but I couldn't figure out what it was lol
+
+    G = 2*math.pi/3 - E
+    H = math.pi/3 - F
+
+    circumcircle_radius = radius/math.sin(E)
+    s = circumcircle_radius*math.sin(math.pi/3)
+    t = circumcircle_radius*math.sin(F)
+    u = circumcircle_radius*math.sin(G)
+    v = circumcircle_radius*math.sin(H)
+
+    out = []
+    for i in range(3):
+        angle = i*2*math.pi/3 + 7*math.pi/6
+        start_x, start_y = x + u*math.cos(angle), y + u*math.sin(angle)
+
+        left_branching_angle = angle + math.pi/2 - E - F
+        left_branch_x, left_branch_y = start_x + v*math.cos(left_branching_angle), start_y + v*math.sin(left_branching_angle)
+
+        right_branching_angle = angle + E + F - math.pi/2
+        right_branch_x, right_branch_y = start_x + v*math.cos(right_branching_angle), start_y + v*math.sin(right_branching_angle)
+
+        out.append(
+            f'M{start_x}, {start_y} '
+            f'A{curve_radius} {curve_radius} 0 0 0 {left_branch_x} {left_branch_y}'
+            f'A{curve_radius} {curve_radius} 0 0 1 {start_x} {start_y}'
+            f'A{curve_radius} {curve_radius} 0 0 1 {right_branch_x} {right_branch_y}'
+            f'A{curve_radius} {curve_radius} 0 0 0 {start_x} {start_y}'
+            'Z'
+        )
+
+    return out
+
+
 class Color(Enum):
     BLACK = "#000000"
     WHITE = "#ffffff"
@@ -152,6 +256,16 @@ def rectangle_template(x: int, y: int, width: int, height: int, color: str, radi
 
 def circle_template(cx, cy, radius, color):
     return f'<circle cx="{cx}" cy="{cy}" r="{radius}" fill="{color}"/>'
+
+
+def crescent_moon_template(cx: int, cy: int, radius: int, color: str, rotation_degrees: int):
+    start_radians = -math.pi*.4 - rotation_degrees*math.pi/180
+    end_radians =    math.pi*.4 - rotation_degrees*math.pi/180
+
+    arc_start_x, arc_start_y = round(cx + radius*math.cos(start_radians)), round(cy + radius*math.sin(start_radians))
+    arc_end_x, arc_end_y = round(cx + radius*math.cos(end_radians)), round(cy + radius*math.sin(end_radians))
+
+    return f'<path d="M{arc_start_x} {arc_start_y}A{radius} {radius} 0 1 0 {arc_end_x} {arc_end_y} {radius} {radius} 0 0 1 {arc_start_x} {arc_start_y}z" fill="{color}"/>'
 
 
 def svg_template(width, height, paths, background_color=None):
