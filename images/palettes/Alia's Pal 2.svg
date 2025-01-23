@@ -1,0 +1,20 @@
+<svg height="300" width="600">
+<rect x="0" y="0" width="100" height="100" rx="0" fill="#19664f"/>
+<rect x="0" y="100" width="100" height="100" rx="0" fill="#33cc9e"/>
+<rect x="0" y="200" width="100" height="100" rx="0" fill="#99e6cf"/>
+<rect x="100" y="0" width="100" height="100" rx="0" fill="#194f66"/>
+<rect x="100" y="100" width="100" height="100" rx="0" fill="#339ecc"/>
+<rect x="100" y="200" width="100" height="100" rx="0" fill="#99cfe6"/>
+<rect x="200" y="0" width="100" height="100" rx="0" fill="#192166"/>
+<rect x="200" y="100" width="100" height="100" rx="0" fill="#3342cc"/>
+<rect x="200" y="200" width="100" height="100" rx="0" fill="#99a1e6"/>
+<rect x="300" y="0" width="100" height="100" rx="0" fill="#401966"/>
+<rect x="300" y="100" width="100" height="100" rx="0" fill="#7f33cc"/>
+<rect x="300" y="200" width="100" height="100" rx="0" fill="#bf99e6"/>
+<rect x="400" y="0" width="100" height="100" rx="0" fill="#66195e"/>
+<rect x="400" y="100" width="100" height="100" rx="0" fill="#cc33bd"/>
+<rect x="400" y="200" width="100" height="100" rx="0" fill="#e699de"/>
+<rect x="500" y="0" width="100" height="100" rx="0" fill="#661930"/>
+<rect x="500" y="100" width="100" height="100" rx="0" fill="#cc3361"/>
+<rect x="500" y="200" width="100" height="100" rx="0" fill="#e699b0"/>
+</svg>

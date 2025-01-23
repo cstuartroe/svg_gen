@@ -8,6 +8,11 @@ def percent_to_hex(p: float):
     return hex(round(p*255))[2:].rjust(2, '0')
 
 
+def hsl_to_hex(h, s, l):
+    r, g, b = colorsys.hls_to_rgb(h, l, s)
+    return f"#{percent_to_hex(r)}{percent_to_hex(g)}{percent_to_hex(b)}"
+
+
 def hsv_to_hex(h, s, v):
     r, g, b = colorsys.hsv_to_rgb(h/360, s, v)
     return f"#{percent_to_hex(r)}{percent_to_hex(g)}{percent_to_hex(b)}"
