@@ -237,6 +237,62 @@ def make_season_cards():
                     )
 
 
+def make_blank_cards():
+    os.makedirs("images/season_cards", exist_ok=True)
+
+    for shape_name, shape_function in SHAPES.items():
+        for number_info in NUMBERS:
+            count = len(number_info.centers)
+
+            file_name = f"blank_{count}_{shape_name}s.svg"
+            filepath = f"{CARDS_DIR}/{file_name}"
+
+            paths = []
+
+            for cx, cy in number_info.centers:
+                paths.append(
+                    shape_function(cx, cy, number_info.radius)
+                )
+
+            with open(filepath, "w") as fh:
+                fh.write(
+                    svg_template(
+                        SIDE_LENGTH,
+                        SIDE_LENGTH,
+                        paths,
+                    )
+                )
+
+    for season in Season:
+        file_name = f"blank_{season.value}.svg"
+        filepath = f"{CARDS_DIR}/{file_name}"
+
+        paths = []
+        paths.append(
+            rectangle_template(
+                0,0, SIDE_LENGTH*3, SIDE_LENGTH*3,
+                radius=0,
+                color=SEASON_COLORS[season].value,
+            )
+        )
+
+        if season in WATERMARKS:
+            watermark = WATERMARKS[season]
+            watermark_color = mix_hex_colors(Color.CREAM.value, SEASON_COLORS[season].value, .2)
+            for x in range(-watermark.width, SIDE_LENGTH*3 + watermark.width, watermark.width):
+                for y in range(-watermark.height, SIDE_LENGTH*3 + watermark.height, watermark.height):
+                    paths += watermark.curves(x, y, watermark_color)
+
+        with open(filepath, "w") as fh:
+            fh.write(
+                svg_template(
+                    SIDE_LENGTH*3,
+                    SIDE_LENGTH*3,
+                    paths,
+                )
+            )
+
+
 # starts on the top and goes clockwise
 def diamond_corners(center: tuple[int, int], radius: int):
     x, y = center
@@ -381,4 +437,5 @@ def make_back():
 
 if __name__ == "__main__":
     make_season_cards()
+    make_blank_cards()
     make_back()
