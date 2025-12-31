@@ -1,14 +1,20 @@
 import cairosvg
 from PIL import Image, ImageFont, ImageDraw
-from utils import Color, svg_template
-from season_cards import sun_path, moon_path, star_path
+from utils import Color, svg_template, rectangle_template, path_template, polygon_path
+from season_cards import sun_path, moon_path, star_path, earth_path, solar_system_paths, NUMBERS, HALF, EM
 
-WIDTH = 650
-HEIGHT = 433
-LEFT_OFFSET = 48
-TOP_OFFSET = 97
-BOX_WIDTH = 239
-BOX_THICKNESS = 59
+MULTIPLE = 10
+
+WIDTH = 650*MULTIPLE
+HEIGHT = 498*MULTIPLE
+
+LEFT_OFFSET = round(48.5*MULTIPLE)
+TOP_OFFSET = 155*MULTIPLE
+BOX_WIDTH = round(190.5*MULTIPLE)
+BOX_HEIGHT = round(188.5*MULTIPLE)
+BOX_THICKNESS = round(106.5*MULTIPLE)
+
+CELESTIAL_RADIUS = BOX_THICKNESS/3
 
 FONT_PATH = "../celestial-cards/static/"
 
@@ -17,156 +23,213 @@ TEMPLATE_PATH = "tuck_box_template.png"
 TMP_SVG_PATH = "temp.svg"
 TMP_PNG_PATH = "temp.png"
 
-Domine = ImageFont.truetype("font/Domine-VariableFont_wght.ttf", 30)
-OpenSans = ImageFont.truetype("font/OpenSans-VariableFont_wdth,wght.ttf", 12)
-
-SEASON_SIDES: list[tuple[tuple[int, int, int, int], Color, int, tuple[int, int, int, int]]] = [
-    (
-        (
-            LEFT_OFFSET,
-            TOP_OFFSET + BOX_WIDTH,
-            BOX_WIDTH,
-            BOX_THICKNESS,
-        ),
-        Color.AUTUMN_RED,
-        0,
-        (-20, 0, 20, 40),
-    ),
-    (
-        (
-            LEFT_OFFSET + BOX_WIDTH + BOX_THICKNESS,
-            TOP_OFFSET - BOX_THICKNESS,
-            BOX_WIDTH,
-            BOX_THICKNESS,
-        ),
-        Color.SPRING_GREEN,
-        0,
-        (-20, -40, 20, 0),
-    ),
-    (
-        (
-            LEFT_OFFSET + BOX_WIDTH,
-            TOP_OFFSET,
-            BOX_THICKNESS,
-            BOX_WIDTH,
-        ),
-        Color.WINTER_BLUE,
-        90,
-        (0, -70, 0, 70),
-    ),
-    (
-        (
-            LEFT_OFFSET + 2 * BOX_WIDTH + BOX_THICKNESS,
-            TOP_OFFSET,
-            BOX_THICKNESS,
-            BOX_WIDTH,
-        ),
-        Color.SUMMER_GOLD,
-        270,
-        (0, -70, 20, 70),
-    ),
-]
+Domine = ImageFont.truetype("font/Domine-VariableFont_wght.ttf", 6*MULTIPLE)
+OpenSans = ImageFont.truetype("font/OpenSans-VariableFont_wdth,wght.ttf", 12*MULTIPLE)
 
 BACK_TEXT = """
-Celestial cards are a new and
-more versatile variety of
-playing cards. See more
-information and game rules at:
-celestial-cards.conorstuartroe.com
+Celestial cards are playing cards
+with three-dimensional markings
 """
 
 if __name__ == "__main__":
     box_template = Image.open(TEMPLATE_PATH)
 
-    box_overlay = Image.new("RGBA", (WIDTH, HEIGHT), Color.BLUE_GRAY.value)
+    box_overlay = Image.new("RGBA", (WIDTH, HEIGHT), Color.BLACK.value)
 
     draw = ImageDraw.Draw(box_overlay, "RGBA")
 
-    def draw_svg_path(box, paths):
-        x, y, width, height = box
-
+    def draw_svg_paths(*paths):
         with open(TMP_SVG_PATH, "w") as fh:
             fh.write(
-                svg_template(width, height, paths)
+                svg_template(WIDTH, HEIGHT, paths)
             )
 
         cairosvg.svg2png(url=TMP_SVG_PATH, write_to=TMP_PNG_PATH)
 
         shape_img = Image.open(TMP_PNG_PATH)
-        box_overlay.paste(shape_img, (x, y), shape_img)
+        box_overlay.paste(shape_img, (0, 0), shape_img)
 
-    def draw_celestial_body(cx, cy, radius, f):
-        x = cx-radius
-        y = cy-radius
+    ss_cx = LEFT_OFFSET + BOX_WIDTH + BOX_THICKNESS + BOX_WIDTH/2
+    ss_cy = TOP_OFFSET + BOX_HEIGHT/2
 
-        draw_svg_path(
-            (x, y, radius*2, radius*2),
-            [f(radius, radius, radius)],
-        )
 
-    for dim, color, rot, adjustments in SEASON_SIDES:
-        x, y, width, height = dim
-        box = (x, y, x+width, y+height)
 
-        bigger_box = tuple(map(
-            lambda pair: sum(pair),
-            zip(box, adjustments),
-        ))
-        draw.rectangle(bigger_box, color.value)
+    draw_svg_paths(
+        rectangle_template(LEFT_OFFSET + BOX_WIDTH, 0, BOX_THICKNESS, HEIGHT, Color.SPRING_GREEN.value),
+        rectangle_template(0, TOP_OFFSET + BOX_HEIGHT, LEFT_OFFSET + BOX_WIDTH + 2*MULTIPLE, HEIGHT - TOP_OFFSET - BOX_HEIGHT, Color.WINTER_BLUE.value),
+        rectangle_template(0, 0, LEFT_OFFSET + BOX_WIDTH, TOP_OFFSET + BOX_HEIGHT, Color.CREAM.value),
+        rectangle_template(LEFT_OFFSET + BOX_WIDTH + BOX_THICKNESS + BOX_WIDTH, 0, WIDTH - LEFT_OFFSET - BOX_WIDTH - BOX_THICKNESS - BOX_WIDTH, HEIGHT, Color.AUTUMN_RED.value),
+        rectangle_template(LEFT_OFFSET + BOX_WIDTH + BOX_THICKNESS - 2*MULTIPLE, 0, BOX_WIDTH + 4*MULTIPLE, TOP_OFFSET - 1*MULTIPLE, Color.SUMMER_GOLD.value),
 
-        txt = Image.new("RGBA", (BOX_WIDTH, BOX_THICKNESS), color.value)
-        txt_draw = ImageDraw.Draw(txt)
-        txt_draw.text(
-            xy=(BOX_WIDTH/2, BOX_THICKNESS/2),
-            text=color.name.split("_")[0].lower(),
-            fill=Color.CREAM.value,
-            font=Domine,
-            anchor='mm',
-        )
-        w = txt.rotate(rot, expand=1)
+        *solar_system_paths(ss_cx, ss_cy, .63),
 
-        box_overlay.paste(w, box, w)
+        star_path(LEFT_OFFSET + BOX_WIDTH/2, TOP_OFFSET + BOX_HEIGHT + BOX_THICKNESS/2, CELESTIAL_RADIUS, Color.CREAM),
+        earth_path(LEFT_OFFSET + BOX_WIDTH + BOX_THICKNESS/2, TOP_OFFSET + BOX_HEIGHT/2, CELESTIAL_RADIUS, Color.CREAM),
+        sun_path(LEFT_OFFSET + BOX_WIDTH + BOX_THICKNESS + BOX_WIDTH/2, TOP_OFFSET - BOX_THICKNESS/2, CELESTIAL_RADIUS, Color.BLACK),
+        moon_path(LEFT_OFFSET + BOX_WIDTH + BOX_THICKNESS + BOX_WIDTH + BOX_THICKNESS/2, TOP_OFFSET + BOX_HEIGHT/2, CELESTIAL_RADIUS, Color.BLACK),
 
-    draw_celestial_body(
-        LEFT_OFFSET+BOX_WIDTH//2,
-        TOP_OFFSET+3*BOX_WIDTH//4,
-        30,
-        sun_path,
+        # triangles in the bleed zones
+        path_template(
+                polygon_path(
+                [
+                    (0, TOP_OFFSET + BOX_HEIGHT + 45*MULTIPLE),
+                    (0, TOP_OFFSET + BOX_HEIGHT),
+                    (LEFT_OFFSET, TOP_OFFSET + BOX_HEIGHT),
+                ],
+            ),
+            Color.CREAM.value,
+        ),
+        path_template(
+            polygon_path(
+                [
+                    (LEFT_OFFSET + BOX_WIDTH, TOP_OFFSET),
+                    (LEFT_OFFSET + BOX_WIDTH, TOP_OFFSET - 50*MULTIPLE),
+                    (LEFT_OFFSET + BOX_WIDTH - 50*MULTIPLE, TOP_OFFSET - 50*MULTIPLE),
+                ],
+            ),
+            Color.SPRING_GREEN.value,
+        ),
+        path_template(
+            polygon_path(
+                [
+                    (LEFT_OFFSET + BOX_WIDTH + BOX_THICKNESS, TOP_OFFSET + BOX_HEIGHT),
+                    (LEFT_OFFSET + BOX_WIDTH + BOX_THICKNESS, TOP_OFFSET + BOX_HEIGHT + 50*MULTIPLE),
+                    (LEFT_OFFSET + BOX_WIDTH + BOX_THICKNESS + 50*MULTIPLE, TOP_OFFSET + BOX_HEIGHT + 50*MULTIPLE),
+                ],
+            ),
+            Color.SPRING_GREEN.value,
+        ),
+        path_template(
+            polygon_path(
+                [
+                    (LEFT_OFFSET + BOX_WIDTH + BOX_THICKNESS + BOX_WIDTH, TOP_OFFSET + BOX_HEIGHT),
+                    (LEFT_OFFSET + BOX_WIDTH + BOX_THICKNESS + BOX_WIDTH, TOP_OFFSET + BOX_HEIGHT + 50*MULTIPLE),
+                    (LEFT_OFFSET + BOX_WIDTH + BOX_THICKNESS + BOX_WIDTH - 50*MULTIPLE, TOP_OFFSET + BOX_HEIGHT + 50*MULTIPLE),
+                ],
+            ),
+            Color.AUTUMN_RED.value,
+        ),
     )
 
-    for offset, shape in enumerate([sun_path, moon_path, star_path]):
-        cx = LEFT_OFFSET + BOX_WIDTH + BOX_THICKNESS + BOX_WIDTH*(offset+1)//4
-        cy = TOP_OFFSET + BOX_WIDTH//3
-
-        draw_celestial_body(cx, cy, 15, shape)
-        draw.text(
-            xy=(cx, cy + 20),
-            text=shape.__name__.split('_')[0],
-            fill=Color.CREAM.value,
-            font=OpenSans,
-            anchor='mm',
-        )
-
-    draw.text(
-        xy=(LEFT_OFFSET+BOX_WIDTH/2, TOP_OFFSET+BOX_WIDTH/3),
-        text="Celestial\nCards",
-        align="center",
-        fill=Color.CREAM.value,
-        font=Domine,
-        anchor='mm',
-    )
+    cover_cx = LEFT_OFFSET + BOX_WIDTH/2
+    line_spacing = 3*MULTIPLE
 
     draw.text(
         xy=(
-            LEFT_OFFSET + BOX_WIDTH + BOX_THICKNESS + BOX_WIDTH//2,
-            TOP_OFFSET + 3*BOX_WIDTH//4,
+            cover_cx,
+            TOP_OFFSET + BOX_HEIGHT*.17,
         ),
         text=BACK_TEXT,
         align="center",
-        fill=Color.CREAM.value,
-        font=OpenSans,
+        fill=Color.BLACK.value,
+        font=Domine,
         anchor='mm',
+        spacing=line_spacing,
     )
 
-    # Image.Image.paste(box_template, box_overlay, (0, 0), box_overlay)
+    spacing = 28*MULTIPLE
+    card_face_scale = .6*MULTIPLE/EM
+
+    for i, (name, shape) in enumerate([
+        ('Planet', earth_path),
+        ('Sun', sun_path),
+        ('Moon', moon_path),
+        ('Star', star_path),
+    ]):
+        cx = cover_cx + (i - 1.5) * spacing
+        draw_svg_paths(
+            shape(cx, TOP_OFFSET + BOX_HEIGHT * .29, 7*MULTIPLE, Color.BLACK),
+        )
+        draw.text(
+            xy=(
+                cx,
+                TOP_OFFSET + BOX_HEIGHT * .36,
+            ),
+            text=name,
+            align="center",
+            fill=Color.BLACK.value,
+            font=Domine,
+            anchor="mm",
+        )
+
+    for i, number in enumerate(["One", "Two", "Three", "Four", "Five"]):
+        cx = cover_cx + (i-2)*spacing
+        ni = NUMBERS[i]
+        cy = TOP_OFFSET + BOX_HEIGHT*.47
+        draw_svg_paths(*[
+            star_path(cx + (x - HALF)*card_face_scale, cy + (y - HALF)*card_face_scale, ni.radius*card_face_scale, Color.BLACK)
+            for x, y in ni.centers
+        ])
+        draw.text(
+            xy=(
+                cx,
+                TOP_OFFSET + BOX_HEIGHT*.555,
+            ),
+            text=number,
+            align="center",
+            fill=Color.BLACK.value,
+            font=Domine,
+            anchor="mm",
+        )
+
+    for i, (color, words) in enumerate([
+        (Color.CREAM, ["Air", "Void", "Beltane", "Samhain"]),
+        (Color.SPRING_GREEN, ["Wood", "Jupiter", "Spring"]),
+        (Color.SUMMER_GOLD, ["Fire", "Venus", "Summer"]),
+        (Color.AUTUMN_RED, ["Metal", "Mars", "Autumn"]),
+        (Color.WINTER_BLUE, ["Water", "Mercury", "Winter"]),
+        (Color.BLACK, ["Earth", "Saturn", "Imbolc", "Lunasa"]),
+    ]):
+        cx = cover_cx + (i - 2.5) * spacing
+        side_length = 12*MULTIPLE
+        border_width = .5*MULTIPLE
+        square_top = TOP_OFFSET + BOX_HEIGHT * .62
+        draw_svg_paths(
+            rectangle_template(
+                cx - side_length/2 - border_width,
+                square_top - border_width,
+                side_length + 2*border_width,
+                side_length + 2*border_width,
+                Color.BLACK.value,
+                radius=2*MULTIPLE,
+            ),
+            rectangle_template(
+                cx - side_length/2,
+                square_top,
+                side_length,
+                side_length,
+                color.value,
+                radius=2*MULTIPLE,
+            )
+        )
+
+        for j, word in enumerate(words):
+            draw.text(
+                xy=(
+                    cx,
+                    TOP_OFFSET + BOX_HEIGHT * (.72 + .045*j),
+                ),
+                text=word,
+                align="center",
+                fill=Color.BLACK.value,
+                font=Domine,
+                anchor="mm",
+            )
+
+    draw.text(
+        xy=(
+            cover_cx,
+            TOP_OFFSET + BOX_HEIGHT * .94,
+        ),
+        text="For games and more info visit\ncelestial-cards.conorstuartroe.com",
+        align="center",
+        fill=Color.BLACK.value,
+        font=Domine,
+        anchor='mm',
+        spacing=line_spacing,
+    )
+
+    box_template = box_template.resize((box_template.width*MULTIPLE, box_template.height*MULTIPLE))
+    Image.Image.paste(box_overlay, box_template, (0, 0), box_template)
+
     box_overlay.save(PNG_PATH)

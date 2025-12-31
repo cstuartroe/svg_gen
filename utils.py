@@ -45,6 +45,20 @@ def mix_hex_colors(hex1: str, hex2: str, percent: float):
     return rgb_to_hex(mix_rgb_colors(hex_to_rgb(hex1), hex_to_rgb(hex2), percent))
 
 
+class CustomBasis:
+    # transforms coordinates using a custom pair of basis vectors
+    # the origin is (x1, y1)
+    # the x basis vector (self.basis) is (x2, y2) - (x1, y1)
+    # the y basis vector is the x basis vector rotated 90 degrees counterclockwise
+    def __init__(self, x1, y1, x2, y2):
+        self.ox = x1
+        self.oy = y1
+        self.basis = x2 - x1, y2 - y1
+
+    def convert(self, x, y):
+        return self.ox + x*self.basis[0] - y*self.basis[1], self.oy + x*self.basis[1] + y*self.basis[0]
+
+
 def star_peaks_valleys(points, center, peak_radius, valley_radius, askew):
     peaks, valleys = [], []
 
@@ -86,13 +100,16 @@ def flat_armed_star_vertices(points, center, peak_radius, askew):
     return star_vertices(points, center, peak_radius, flat_arm_valley_radius(points, peak_radius), askew)
 
 
-def polygon_path(vertices):
+def polygon_path(vertices, close=True):
     vertex_string = ""
     for i, (x, y) in enumerate(vertices):
         vertex_string += "M " if (i == 0) else "L "
         vertex_string += f"{x} {y} "
 
-    return vertex_string + "Z"
+    if close:
+        vertex_string += "Z"
+
+    return vertex_string
 
 
 def flower_control_points(center, peak, valley, curviness):
@@ -142,6 +159,7 @@ def rectangle_path(x, y, width, height):
     ])
 
 
+# TODO: deprecate
 def hexagon_path(x, y, side_length):
     short_side = side_length/2
     half_height = side_length*math.sqrt(3)/2
@@ -156,20 +174,65 @@ def hexagon_path(x, y, side_length):
     ])
 
 
-def leaf_control(start_x, start_y, end_x, end_y):
-    mid_x = (start_x + end_x)/2
-    return f"C{mid_x},{start_y} {mid_x},{end_y} {end_x},{end_y}"
+def centered_hexagon_path(cx, cy, side_length, vert=False):
+    points = []
+    for i in range(6):
+        angle = i*math.pi/3
+        if vert:
+            angle += math.pi/6
+
+        points.append((cx + side_length*math.cos(angle), cy + side_length*math.sin(angle)))
+    return polygon_path(points)
 
 
-def leaf_path(x, y, width, height):
-    points = [(x, y), (x + width, y - height), (x + 2*width, y), (x + width, y + height), (x, y)]
+def cube_paths(cx, cy, side_length):
+    out = []
 
-    out = f"M{x},{y}"
-    for i in range(4):
-        (start_x, start_y), (end_x, end_y) = points[i:i+2]
-        out += " " + leaf_control(start_x, start_y, end_x, end_y)
+    out.append(centered_hexagon_path(cx, cy, side_length, vert=True))
 
-    return out + "Z"
+    for i in range(3):
+        angle = (4*i - 1)*math.pi/6
+        outer_point = cx + side_length * math.cos(angle), cy + side_length * math.sin(angle)
+        basis = CustomBasis(cx, cy, *outer_point)
+
+        points = [basis.convert(*p) for p in [(0, 0), (.75, 0)]]
+        out.append(polygon_path(points, close=False))
+
+    return out
+
+
+def leaf_paths(x, y, side_length):
+    half_height = side_length*math.sqrt(3)/2
+    cx, cy = x + side_length/2, y + half_height
+
+    out = []
+
+    for i in range(6):
+        points = []
+
+        corner_angle = i * math.pi / 3
+        corner_point = cx + side_length * math.cos(corner_angle), cy + side_length * math.sin(corner_angle)
+
+        edge_angle = i * math.pi / 3 + math.pi / 6
+        leading_edge_point = cx + half_height * math.cos(edge_angle), cy + half_height * math.sin(edge_angle)
+
+        b1 = CustomBasis(cx, cy, *leading_edge_point)
+        for point in [
+            (0, 0),
+            (.2, -.03), (.4, .06), (.6, -.09), (.8, .12),
+            (1, 0),
+        ]:
+            points.append(b1.convert(*point))
+        b2 = CustomBasis(*leading_edge_point, *corner_point)
+        for point in [(.5, -.1), (1, 0)]:
+            points.append(b2.convert(*point))
+        # b3 = CustomBasis(*corner_point, cx, cy)
+        # for point in [(.6, 0)]:
+        #     points.append(b3.convert(*point))
+
+        out.append(polygon_path(points, close=False))
+
+    return out
 
 
 def tessellating_clover_paths(x, y, E, F, radius, curve_radius):
@@ -209,6 +272,29 @@ def tessellating_clover_paths(x, y, E, F, radius, curve_radius):
     return out
 
 
+def uniform_spiral_path(cx, cy, width, offsetr, totalr, jump, num_sections):
+    start_point = (
+        cx + width*math.cos(offsetr),
+        cy + width*math.sin(offsetr),
+    )
+    out = f"M{start_point[0]}, {start_point[1]}"
+
+    for i in range(num_sections):
+        fraction = (i+1)/num_sections
+        radius = jump + (width-jump)*(1-fraction)
+
+        point = (
+            cx + radius*math.cos(offsetr - fraction*totalr),
+            cy + radius*math.sin(offsetr - fraction*totalr),
+        )
+
+        curve_radius = jump + (width-jump)*(1-(2*i+1)/(2*num_sections))
+        out += f'A {curve_radius} {curve_radius} 0 0 0 {point[0]} {point[1]}'
+
+    out += f"L{cx}, {cy}"
+    return out
+
+
 class Color(Enum):
     BLACK = "#000000"
     WHITE = "#ffffff"
@@ -222,9 +308,9 @@ class Color(Enum):
     CREAM = "#ddddcc"
 
     SPRING_GREEN = "#478547"
-    SUMMER_GOLD = "#caa02b"
+    SUMMER_GOLD = "#dbb448"
     AUTUMN_RED = "#994936"
-    WINTER_BLUE = "#343445"
+    WINTER_BLUE = "#363659"
 
     BLUE_GRAY = "#202027"
 
@@ -263,14 +349,33 @@ def circle_template(cx, cy, radius, color):
     return f'<circle cx="{cx}" cy="{cy}" r="{radius}" fill="{color}"/>'
 
 
-def crescent_moon_template(cx: int, cy: int, radius: int, color: str, rotation_degrees: int):
-    start_radians = -math.pi*.4 - rotation_degrees*math.pi/180
-    end_radians =    math.pi*.4 - rotation_degrees*math.pi/180
+def crescent_moon_template(cx: int, cy: int, radius: int, color: str, rotation: float, percent: float):
+    start_radians = rotation - math.pi/2
+    end_radians = rotation + math.pi/2
 
     arc_start_x, arc_start_y = round(cx + radius*math.cos(start_radians)), round(cy + radius*math.sin(start_radians))
     arc_end_x, arc_end_y = round(cx + radius*math.cos(end_radians)), round(cy + radius*math.sin(end_radians))
 
-    return f'<path d="M{arc_start_x} {arc_start_y}A{radius} {radius} 0 1 0 {arc_end_x} {arc_end_y} {radius} {radius} 0 0 1 {arc_start_x} {arc_start_y}z" fill="{color}"/>'
+    if percent < 0:
+        raise ValueError
+    if percent == 0:
+        return ""
+    if percent == .5:
+        return f'<path d="M{arc_start_x} {arc_start_y}A{radius} {radius} 0 1 0 {arc_end_x} {arc_end_y} z" fill="{color}"/>'
+    elif percent < .5:
+        d = 1 - 2*percent
+        inner_radius = radius*(d**2 + 1)/(2*d)
+
+        return f'<path d="M{arc_start_x} {arc_start_y}A{radius} {radius} 0 1 0 {arc_end_x} {arc_end_y} {inner_radius} {inner_radius} 0 0 1 {arc_start_x} {arc_start_y}z" fill="{color}"/>'
+    elif percent < 1:
+        d = 2*percent - 1
+        inner_radius = radius*(d**2 + 1)/(2*d)
+
+        return f'<path d="M{arc_start_x} {arc_start_y}A{radius} {radius} 0 1 0 {arc_end_x} {arc_end_y} {inner_radius} {inner_radius} 1 0 0 {arc_start_x} {arc_start_y}z" fill="{color}"/>'
+    elif percent == 1:
+        return circle_template(cx, cy, radius, color)
+    else:
+        raise ValueError
 
 
 def svg_template(width, height, paths, background_color=None):

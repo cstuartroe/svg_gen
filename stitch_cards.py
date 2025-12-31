@@ -6,13 +6,13 @@ from tqdm import tqdm
 from season_cards import SIDE_LENGTH
 
 WIDTH = 10
-HEIGHT = 6
+HEIGHT = 12
 PNG_DIR = 'pngs/season_cards/'
 
 card_fronts = sorted([
     filename
     for filename in os.listdir(PNG_DIR)
-    if re.match(r"\d\d", filename)
+    if re.match(r"\d{3}", filename)
 ])
 
 stitched_image = Image.new(
