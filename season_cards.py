@@ -115,8 +115,8 @@ SHAPES = {
 
 EM = 50  # 15
 SIDE_LENGTH = 48 * EM
-BORDER_WIDTH = 3 * EM
-CORNER_RADIUS = BORDER_WIDTH
+BORDER_WIDTH = 4 * EM
+CORNER_RADIUS = BORDER_WIDTH*.75
 INNER_LENGTH = SIDE_LENGTH - BORDER_WIDTH*2
 
 
@@ -569,7 +569,7 @@ def make_solar_system_back():
     filepath = f"{CARDS_DIR}/solar_system_back.svg"
 
     cx, cy = SIDE_LENGTH / 2, SIDE_LENGTH / 2
-    star_distance = .72
+    star_distance = .7
 
     paths = []
     paths.append(
