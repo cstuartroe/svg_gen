@@ -1,7 +1,7 @@
-<svg height="2400" width="2400">
+<svg height="720" width="720">
 
-    <circle cx="1200" cy="1200" r="360.94757082487297" stroke="#ddddcc" stroke-width="78.104858350254" fill="none"/>
-    <rect x="1160.947570824873" y="839.052429175127" width="78.104858350254" height="721.8951416497459" rx="0" fill="#ddddcc"/>
-    <rect x="839.052429175127" y="1160.947570824873" width="721.8951416497459" height="78.104858350254" rx="0" fill="#ddddcc"/>
+    <circle cx="360" cy="360" r="108.2842712474619" stroke="#ddddcc" stroke-width="23.431457505076196" fill="none"/>
+    <rect x="348.2842712474619" y="251.7157287525381" width="23.4314575050762" height="216.5685424949238" rx="0" fill="#ddddcc"/>
+    <rect x="251.7157287525381" y="348.2842712474619" width="216.5685424949238" height="23.4314575050762" rx="0" fill="#ddddcc"/>
     
 </svg>
