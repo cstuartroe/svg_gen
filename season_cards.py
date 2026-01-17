@@ -132,7 +132,14 @@ QUARTER = SIDE_LENGTH//4
 HALF = SIDE_LENGTH//2
 THREE_QUARTER = 3*SIDE_LENGTH//4
 
-WATERMARK_SATURATION = .075
+WATERMARK_SATURATION: dict[Season, float] = {
+    Season.AIR: .05,
+    Season.SUMMER: .05,
+    Season.SPRING: .075,
+    Season.WINTER: .075,
+    Season.AUTUMN: .1,
+    Season.EARTH: .1,
+}
 
 NUMBERS = [
     NumberInfo(LARGE, [
@@ -295,7 +302,7 @@ def make_season_cards():
                     paths.append(mask)
 
                     watermark = WATERMARKS[season]
-                    watermark_color = mix_hex_colors(contrast_color.value, season_color.value, WATERMARK_SATURATION)
+                    watermark_color = mix_hex_colors(contrast_color.value, season_color.value, WATERMARK_SATURATION[season])
                     for x in range(0, SIDE_LENGTH, watermark.width):
                         for y in range(0, SIDE_LENGTH, watermark.height):
                             paths += watermark.curves(x, y, watermark_color)
@@ -358,7 +365,7 @@ def make_blank_cards():
 
         if season in WATERMARKS:
             watermark = WATERMARKS[season]
-            watermark_color = mix_hex_colors(contrast_color.value, SEASON_COLORS[season].value, .075)
+            watermark_color = mix_hex_colors(contrast_color.value, SEASON_COLORS[season].value, WATERMARK_SATURATION[season])
             for x in range(-watermark.width, SIDE_LENGTH*3 + watermark.width, watermark.width):
                 for y in range(-watermark.height, SIDE_LENGTH*3 + watermark.height, watermark.height):
                     paths += watermark.curves(x, y, watermark_color)
