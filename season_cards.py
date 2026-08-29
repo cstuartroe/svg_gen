@@ -304,8 +304,8 @@ def make_season_cards():
 
                     watermark = WATERMARKS[season]
                     watermark_color = mix_hex_colors(contrast_color.value, season_color.value, WATERMARK_SATURATION[season])
-                    for x in range(0, SIDE_LENGTH, watermark.width):
-                        for y in range(0, SIDE_LENGTH, watermark.height):
+                    for x in range(-watermark.width, SIDE_LENGTH, watermark.width):
+                        for y in range(-watermark.height, SIDE_LENGTH, watermark.height):
                             paths += watermark.curves(x, y, watermark_color)
 
                 for cx, cy in number_info.centers:
