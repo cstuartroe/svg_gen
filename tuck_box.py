@@ -34,7 +34,7 @@ with three-dimensional markings
 if __name__ == "__main__":
     box_template = Image.open(TEMPLATE_PATH)
 
-    box_overlay = Image.new("RGBA", (WIDTH, HEIGHT), Color.BLACK.value)
+    box_overlay = Image.new("RGBA", (WIDTH, HEIGHT), Color.EARTH_BROWN.value)
 
     draw = ImageDraw.Draw(box_overlay, "RGBA")
 
@@ -61,12 +61,12 @@ if __name__ == "__main__":
         rectangle_template(LEFT_OFFSET + BOX_WIDTH + BOX_THICKNESS + BOX_WIDTH, 0, WIDTH - LEFT_OFFSET - BOX_WIDTH - BOX_THICKNESS - BOX_WIDTH, HEIGHT, Color.AUTUMN_RED.value),
         rectangle_template(LEFT_OFFSET + BOX_WIDTH + BOX_THICKNESS - 2*MULTIPLE, 0, BOX_WIDTH + 4*MULTIPLE, TOP_OFFSET - 1*MULTIPLE, Color.SUMMER_GOLD.value),
 
-        *solar_system_paths(ss_cx, ss_cy, .63),
+        *solar_system_paths(ss_cx, ss_cy, .6),
 
         star_path(LEFT_OFFSET + BOX_WIDTH/2, TOP_OFFSET + BOX_HEIGHT + BOX_THICKNESS/2, CELESTIAL_RADIUS, Color.CREAM),
         earth_path(LEFT_OFFSET + BOX_WIDTH + BOX_THICKNESS/2, TOP_OFFSET + BOX_HEIGHT/2, CELESTIAL_RADIUS, Color.CREAM),
-        sun_path(LEFT_OFFSET + BOX_WIDTH + BOX_THICKNESS + BOX_WIDTH/2, TOP_OFFSET - BOX_THICKNESS/2, CELESTIAL_RADIUS, Color.BLACK),
-        moon_path(LEFT_OFFSET + BOX_WIDTH + BOX_THICKNESS + BOX_WIDTH + BOX_THICKNESS/2, TOP_OFFSET + BOX_HEIGHT/2, CELESTIAL_RADIUS, Color.BLACK),
+        sun_path(LEFT_OFFSET + BOX_WIDTH + BOX_THICKNESS + BOX_WIDTH/2, TOP_OFFSET - BOX_THICKNESS/2, CELESTIAL_RADIUS, Color.CREAM),
+        moon_path(LEFT_OFFSET + BOX_WIDTH + BOX_THICKNESS + BOX_WIDTH + BOX_THICKNESS/2, TOP_OFFSET + BOX_HEIGHT/2, CELESTIAL_RADIUS, Color.CREAM),
 
         # triangles in the bleed zones
         path_template(
@@ -121,7 +121,7 @@ if __name__ == "__main__":
         ),
         text=BACK_TEXT,
         align="center",
-        fill=Color.BLACK.value,
+        fill=Color.EARTH_BROWN.value,
         font=Domine,
         anchor='mm',
         spacing=line_spacing,
@@ -138,7 +138,7 @@ if __name__ == "__main__":
     ]):
         cx = cover_cx + (i - 1.5) * spacing
         draw_svg_paths(
-            shape(cx, TOP_OFFSET + BOX_HEIGHT * .29, 7*MULTIPLE, Color.BLACK),
+            shape(cx, TOP_OFFSET + BOX_HEIGHT * .29, 7*MULTIPLE, Color.EARTH_BROWN),
         )
         draw.text(
             xy=(
@@ -147,7 +147,7 @@ if __name__ == "__main__":
             ),
             text=name,
             align="center",
-            fill=Color.BLACK.value,
+            fill=Color.EARTH_BROWN.value,
             font=Domine,
             anchor="mm",
         )
@@ -157,7 +157,7 @@ if __name__ == "__main__":
         ni = NUMBERS[i]
         cy = TOP_OFFSET + BOX_HEIGHT*.47
         draw_svg_paths(*[
-            star_path(cx + (x - HALF)*card_face_scale, cy + (y - HALF)*card_face_scale, ni.radius*card_face_scale, Color.BLACK)
+            star_path(cx + (x - HALF)*card_face_scale, cy + (y - HALF)*card_face_scale, ni.radius*card_face_scale, Color.EARTH_BROWN)
             for x, y in ni.centers
         ])
         draw.text(
@@ -167,7 +167,7 @@ if __name__ == "__main__":
             ),
             text=number,
             align="center",
-            fill=Color.BLACK.value,
+            fill=Color.EARTH_BROWN.value,
             font=Domine,
             anchor="mm",
         )
@@ -178,7 +178,7 @@ if __name__ == "__main__":
         (Color.SUMMER_GOLD, ["Fire", "Venus", "Summer"]),
         (Color.AUTUMN_RED, ["Metal", "Mars", "Autumn"]),
         (Color.WINTER_BLUE, ["Water", "Mercury", "Winter"]),
-        (Color.BLACK, ["Earth", "Saturn", "Imbolc", "Lunasa"]),
+        (Color.EARTH_BROWN, ["Earth", "Saturn", "Imbolc", "Lunasa"]),
     ]):
         cx = cover_cx + (i - 2.5) * spacing
         side_length = 12*MULTIPLE
@@ -190,7 +190,7 @@ if __name__ == "__main__":
                 square_top - border_width,
                 side_length + 2*border_width,
                 side_length + 2*border_width,
-                Color.BLACK.value,
+                Color.EARTH_BROWN.value,
                 radius=2*MULTIPLE,
             ),
             rectangle_template(
@@ -211,7 +211,7 @@ if __name__ == "__main__":
                 ),
                 text=word,
                 align="center",
-                fill=Color.BLACK.value,
+                fill=Color.EARTH_BROWN.value,
                 font=Domine,
                 anchor="mm",
             )
@@ -223,7 +223,7 @@ if __name__ == "__main__":
         ),
         text="For games and more info visit\ncelestial-cards.conorstuartroe.com",
         align="center",
-        fill=Color.BLACK.value,
+        fill=Color.EARTH_BROWN.value,
         font=Domine,
         anchor='mm',
         spacing=line_spacing,

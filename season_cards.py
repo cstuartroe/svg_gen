@@ -22,10 +22,8 @@ SEASON_COLORS: dict[Season, Color] = {
     Season.SUMMER: Color.SUMMER_GOLD,
     Season.AUTUMN: Color.AUTUMN_RED,
     Season.WINTER: Color.WINTER_BLUE,
-    Season.EARTH: Color.BLACK,
+    Season.EARTH: Color.EARTH_BROWN,
 }
-
-LIGHT_COLORS = (Color.CREAM, Color.SPRING_GREEN, Color.SUMMER_GOLD)
 
 
 def earth_path(cx, cy, radius, color):
@@ -113,9 +111,11 @@ SHAPES = {
     "earth": earth_path,
 }
 
-EM = 50  # 15
+PRINTING = False
+
+EM = 50 if PRINTING else 15
 SIDE_LENGTH = 48 * EM
-BORDER_WIDTH = 4 * EM
+BORDER_WIDTH = (4 if PRINTING else 2.5) * EM
 CORNER_RADIUS = BORDER_WIDTH*.75
 INNER_LENGTH = SIDE_LENGTH - BORDER_WIDTH*2
 
@@ -124,6 +124,7 @@ INNER_LENGTH = SIDE_LENGTH - BORDER_WIDTH*2
 class NumberInfo:
     radius: int
     centers: list[tuple[int, int]]
+
 
 LARGE = SIDE_LENGTH//6
 SMALL = SIDE_LENGTH//12
@@ -134,11 +135,11 @@ THREE_QUARTER = 3*SIDE_LENGTH//4
 
 WATERMARK_SATURATION: dict[Season, float] = {
     Season.AIR: .05,
-    Season.SUMMER: .05,
-    Season.SPRING: .075,
+    Season.SUMMER: .175,
+    Season.SPRING: .1,
     Season.WINTER: .075,
     Season.AUTUMN: .1,
-    Season.EARTH: .1,
+    Season.EARTH: .05,
 }
 
 NUMBERS = [
@@ -249,7 +250,7 @@ def make_season_cards():
     i = 0
     for season in Season:
         season_color = SEASON_COLORS[season]
-        contrast_color = Color.BLACK if season_color in LIGHT_COLORS else Color.CREAM
+        contrast_color = Color.EARTH_BROWN if season_color is Color.CREAM else Color.CREAM
 
         for shape_name, shape_function in SHAPES.items():
             for number_info in NUMBERS:
@@ -264,7 +265,7 @@ def make_season_cards():
                     rectangle_template(
                         0, 0, SIDE_LENGTH, SIDE_LENGTH,
                         radius=0,
-                        color=contrast_color.value,
+                        color=Color.CREAM.value,
                     )
                 )
                 paths.append(
@@ -327,7 +328,7 @@ def make_blank_cards():
 
     for shape_name, shape_function in SHAPES.items():
         for number_info in NUMBERS:
-            for color_name, color in (('light', Color.CREAM), ('dark', Color.BLACK)):
+            for color_name, color in (('light', Color.CREAM), ('dark', Color.EARTH_BROWN)):
                 count = len(number_info.centers)
 
                 file_name = f"blank_{count}_{shape_name}s_{color_name}.svg"
@@ -350,7 +351,7 @@ def make_blank_cards():
                     )
 
     for season in Season:
-        contrast_color = Color.BLACK if SEASON_COLORS[season] in LIGHT_COLORS else Color.CREAM
+        contrast_color = Color.EARTH_BROWN if SEASON_COLORS[season] is Color.CREAM else Color.CREAM
         file_name = f"blank_{season.value}.svg"
         filepath = f"{CARDS_DIR}/{file_name}"
 
@@ -415,7 +416,7 @@ def make_back():
         rectangle_template(
             0, 0, SIDE_LENGTH, SIDE_LENGTH,
             radius=0,
-            color=Color.BLACK.value,
+            color=Color.EARTH_BROWN.value,
         )
     )
 
@@ -576,17 +577,91 @@ def make_solar_system_back():
     filepath = f"{CARDS_DIR}/solar_system_back.svg"
 
     cx, cy = SIDE_LENGTH / 2, SIDE_LENGTH / 2
-    star_distance = .7
+    star_distance = .7 if PRINTING else .77
 
     paths = []
     paths.append(
         rectangle_template(
             0, 0, SIDE_LENGTH, SIDE_LENGTH,
             radius=0,
-            color=Color.BLACK.value,
+            color=Color.EARTH_BROWN.value,
         )
     )
     paths += solar_system_paths(cx, cy, star_distance)
+
+    with open(filepath, "w") as fh:
+        fh.write(
+            svg_template(
+                SIDE_LENGTH,
+                SIDE_LENGTH,
+                paths,
+            )
+        )
+
+
+def make_dummy_front():
+    season = Season.AIR
+
+    season_color = SEASON_COLORS[season]
+    contrast_color = Color.EARTH_BROWN
+
+    shapes = [earth_path, sun_path, moon_path, star_path]
+    number_info = NUMBERS[3]
+
+    file_name = f"dummy_front.svg"
+    filepath = f"{CARDS_DIR}/{file_name}"
+
+    paths = []
+    paths.append(
+        rectangle_template(
+            0, 0, SIDE_LENGTH, SIDE_LENGTH,
+            radius=0,
+            color=Color.CREAM.value,
+        )
+    )
+    paths.append(
+        rectangle_template(
+            BORDER_WIDTH,
+            BORDER_WIDTH,
+            SIDE_LENGTH - 2 * BORDER_WIDTH,
+            SIDE_LENGTH - 2 * BORDER_WIDTH,
+            radius=CORNER_RADIUS,
+            color=season_color.value,
+        )
+    )
+
+    mask = f"""
+        <mask id="bodymask">
+            {rectangle_template(
+                0,
+                0,
+                SIDE_LENGTH,
+                SIDE_LENGTH,
+                radius=0,
+                color="black",
+            )}
+            {rectangle_template(
+                BORDER_WIDTH,
+                BORDER_WIDTH,
+                SIDE_LENGTH - 2 * BORDER_WIDTH,
+                SIDE_LENGTH - 2 * BORDER_WIDTH,
+                radius=CORNER_RADIUS,
+                color="white",
+            )}
+        </mask>
+    """
+    paths.append(mask)
+
+    watermark = WATERMARKS[season]
+    watermark_color = mix_hex_colors(contrast_color.value, season_color.value, WATERMARK_SATURATION[season])
+    for x in range(0, SIDE_LENGTH, watermark.width):
+        for y in range(0, SIDE_LENGTH, watermark.height):
+            paths += watermark.curves(x, y, watermark_color)
+
+    for i, (cx, cy) in enumerate(number_info.centers):
+        paths.append(
+            shapes[i](cx, cy, number_info.radius, contrast_color)
+        )
 
     with open(filepath, "w") as fh:
         fh.write(
@@ -605,3 +680,4 @@ if __name__ == "__main__":
     make_blank_cards()
     make_back()
     make_solar_system_back()
+    make_dummy_front()
