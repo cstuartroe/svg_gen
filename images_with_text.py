@@ -1,6 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont
 
 Xiaolai = ImageFont.truetype("font/XiaolaiSC-Regular.ttf", 600)
+LauvinkoHandwrittenBold = ImageFont.truetype("font/LauvinkoHandwritten-Bold.ttf", 150)
 
 
 def jaobon_logo():
@@ -56,6 +57,22 @@ def alia():
     img.save("pngs/alia.png")
 
 
+def lauvinko_logo():
+    img = Image.open("pngs/black_lotus.png")
+    width, height = img.size
+
+    draw = ImageDraw.Draw(img)
+    draw.text(
+        (width//2, height//2 - 25),
+        text="lahowinuko",
+        fill="#ffffff",
+        font=LauvinkoHandwrittenBold,
+        anchor="mm",
+    )
+    img.save("pngs/lauvinko.png")
+
+
 if __name__ == "__main__":
     jaobon_logo()
     alia()
+    lauvinko_logo()
