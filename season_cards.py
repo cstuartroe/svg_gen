@@ -118,6 +118,7 @@ SIDE_LENGTH = 48 * EM
 BORDER_WIDTH = (4 if PRINTING else 2.5) * EM
 CORNER_RADIUS = BORDER_WIDTH*.75
 INNER_LENGTH = SIDE_LENGTH - BORDER_WIDTH*2
+PATTERN_MASK_ID = "bodymask"
 
 
 @dataclass
@@ -173,73 +174,76 @@ NUMBERS = [
 
 @dataclass
 class SeasonWatermark:
-    curves: Callable[[int, int, str], list[str]]
+    curves: Callable[[float, float, str], list[str]]
     width: int
     height: int
 
 
-WATERMARKS: dict[Season, SeasonWatermark] = {
-    Season.SPRING: SeasonWatermark(
+STROKE_WIDTH = .2*EM
+
+
+WATERMARKS: dict[Season, Callable[[float, float], SeasonWatermark]] = {
+    Season.SPRING: lambda em, stroke_width: SeasonWatermark(
         # See comment in tessellating_clover_paths. There's some constraint that I failed to figure out, so I
         # arrived at these numbers by some trial and error.
         curves=lambda x, y, color: [
-            f'<path d="{path}" stroke="{color}" stroke-width="{.2*EM}" fill="none" mask="url(#bodymask)"/>'
-            for path in tessellating_clover_paths(x, y, math.pi * .6, math.pi * .1205, 2.4*EM, 1.2*EM)
+            f'<path d="{path}" stroke="{color}" stroke-width="{stroke_width}" fill="none" mask="url(#{PATTERN_MASK_ID})"/>'
+            for path in tessellating_clover_paths(x, y, math.pi * .6, math.pi * .1205, 2.4*em, 1.2*em)
         ] + [
-            f'<path d="{path}" stroke="{color}" stroke-width="{.2*EM}" fill="none" mask="url(#bodymask)"/>'
-            for path in tessellating_clover_paths(x + 3*EM, y + 1.75*EM, math.pi * .6, math.pi * .1205, 2.4*EM, 1.2*EM)
+            f'<path d="{path}" stroke="{color}" stroke-width="{stroke_width}" fill="none" mask="url(#{PATTERN_MASK_ID})"/>'
+            for path in tessellating_clover_paths(x + 3*em, y + 1.75*em, math.pi * .6, math.pi * .1205, 2.4*em, 1.2*em)
         ],
-        width=round(6*EM),
-        height=round(3.5*EM),
+        width=round(6*em),
+        height=round(3.5*em),
     ),
-    Season.SUMMER: SeasonWatermark(
+    Season.SUMMER: lambda em, stroke_width: SeasonWatermark(
         curves=lambda x, y, color: [
-            f'<path d="{hexagon_path(x, y, 1.2*EM)}" stroke="{color}" stroke-width="{.2*EM}" fill="none" mask="url(#bodymask)"/>',
-            f'<path d="{hexagon_path(x + 1.8*EM, y + .6*EM*math.sqrt(3), 1.2*EM)}" stroke="{color}" stroke-width="{.2*EM}" fill="none" mask="url(#bodymask)"/>',
+            f'<path d="{centered_hexagon_path(x, y, 1.2*em, vert=True)}" stroke="{color}" stroke-width="{stroke_width}" fill="none" mask="url(#{PATTERN_MASK_ID})"/>',
+            f'<path d="{centered_hexagon_path(x + .6*em*math.sqrt(3), y + 1.8*em, 1.2*em, vert=True)}" stroke="{color}" stroke-width="{stroke_width}" fill="none" mask="url(#{PATTERN_MASK_ID})"/>',
         ],
-        width=round(3.6*EM),
-        height=round(1.2*EM*math.sqrt(3)),
+        width=round(1.2*em*math.sqrt(3)),
+        height=round(3.6*em),
     ),
-    Season.AUTUMN: SeasonWatermark(
+    Season.AUTUMN: lambda em, stroke_width: SeasonWatermark(
         curves=lambda x, y, color: [
-            f'<path d="{path}" stroke="{color}" stroke-width="{.2*EM}" fill="none" mask="url(#bodymask)"/>'
+            f'<path d="{path}" stroke="{color}" stroke-width="{stroke_width}" fill="none" mask="url(#{PATTERN_MASK_ID})"/>'
             for path in (
-                leaf_paths(x, y, 4*EM)
-                + leaf_paths(x + 6*EM, y + 2*EM*math.sqrt(3), 4*EM)
+                leaf_paths(x, y, 4*em)
+                + leaf_paths(x + 2*em*math.sqrt(3), y + 6*em, 4*em)
             )
         ],
-        width=round(12*EM),
-        height=round(4*EM*math.sqrt(3)),
+        width=round(4*em*math.sqrt(3)),
+        height=round(12*em),
     ),
-    Season.WINTER: SeasonWatermark(
+    Season.WINTER: lambda em, stroke_width: SeasonWatermark(
         curves=lambda x, y, color: [
-            f'<path d="M{x} {y}A{.8*EM} {.8*EM} 0 0 0 {x+EM} {y} {.8*EM} {.8*EM} 0 0 1 {x+2*EM} {y} {.8*EM} {.8*EM} 0 0 0 {x+EM} {y} {.8*EM} {.8*EM} 0 0 1 {x} {y}" stroke="{color}" stroke-width="{.2*EM}" fill="none" mask="url(#bodymask)"/>',
-            f'<path d="M{x+EM} {y+1.6*EM}A{.8*EM} {.8*EM} 0 0 0 {x+2*EM} {y+1.6*EM} {.8*EM} {.8*EM} 0 0 1 {x+3*EM} {y+1.6*EM} {.8*EM} {.8*EM} 0 0 0 {x+2*EM} {y+1.6*EM} {.8*EM} {.8*EM} 0 0 1 {x+EM} {y+1.6*EM} " stroke="{color}" stroke-width="{.2*EM}" fill="none" mask="url(#bodymask)"/>',
+            f'<path d="M{x} {y}A{.8*em} {.8*em} 0 0 0 {x+em} {y} {.8*em} {.8*em} 0 0 1 {x+2*em} {y} {.8*em} {.8*em} 0 0 0 {x+em} {y} {.8*em} {.8*em} 0 0 1 {x} {y}" stroke="{color}" stroke-width="{stroke_width}" fill="none" mask="url(#{PATTERN_MASK_ID})"/>',
+            f'<path d="M{x+em} {y+1.6*em}A{.8*em} {.8*em} 0 0 0 {x+2*em} {y+1.6*em} {.8*em} {.8*em} 0 0 1 {x+3*em} {y+1.6*em} {.8*em} {.8*em} 0 0 0 {x+2*em} {y+1.6*em} {.8*em} {.8*em} 0 0 1 {x+em} {y+1.6*em} " stroke="{color}" stroke-width="{stroke_width}" fill="none" mask="url(#{PATTERN_MASK_ID})"/>',
         ],
-        width=round(2*EM),
-        height=round(3.2*EM),
+        width=round(2*em),
+        height=round(3.2*em),
     ),
-    Season.AIR: SeasonWatermark(
+    Season.AIR: lambda em, stroke_width: SeasonWatermark(
         curves=lambda x, y, color: [
-            f'<path d="{uniform_spiral_path(x, y, 1.8*EM, i*math.pi, 2.5*math.pi, .1*EM, 10)}" stroke="{color}" stroke-width="{.2*EM}" fill="none" mask="url(#bodymask)"/>'
+            f'<path d="{uniform_spiral_path(x, y, 1.8*em, i*math.pi, 2.5*math.pi, .1*em, 10)}" stroke="{color}" stroke-width="{stroke_width}" fill="none" mask="url(#{PATTERN_MASK_ID})"/>'
             for i in range(2)
         ] + [
-            f'<path d="{uniform_spiral_path(x + 1.8*EM, y + 1.8*EM*math.sqrt(3), 1.8*EM, i*math.pi, 2.5*math.pi, .1*EM, 10)}" stroke="{color}" stroke-width="{.2*EM}" fill="none" mask="url(#bodymask)"/>'
+            f'<path d="{uniform_spiral_path(x + 1.8*em, y + 1.8*em*math.sqrt(3), 1.8*em, i*math.pi, 2.5*math.pi, .1*em, 10)}" stroke="{color}" stroke-width="{stroke_width}" fill="none" mask="url(#{PATTERN_MASK_ID})"/>'
             for i in range(2)
         ],
-        width=round(3.6*EM),
-        height=round(3.6*EM*math.sqrt(3))
+        width=round(3.6*em),
+        height=round(3.6*em*math.sqrt(3))
     ),
-    Season.EARTH: SeasonWatermark(
+    Season.EARTH: lambda em, stroke_width: SeasonWatermark(
         curves=lambda x, y, color: [
-            f'<path d="{path}" stroke="{color}" stroke-width="{.2*EM}" fill="none" mask="url(#bodymask)"/>'
+            f'<path d="{path}" stroke="{color}" stroke-width="{stroke_width}" fill="none" mask="url(#{PATTERN_MASK_ID})"/>'
             for path in (
-                cube_paths(x, y, 2*EM)
-                + cube_paths(x + 1*EM*math.sqrt(3), y + 3*EM, 2*EM)
+                cube_paths(x, y, 2*em)
+                + cube_paths(x + 1*em*math.sqrt(3), y + 3*em, 2*em)
             )
         ],
-        width=round(2*EM*math.sqrt(3)),
-        height=round(6*EM),
+        width=round(2*em*math.sqrt(3)),
+        height=round(6*em),
     ),
 }
 
@@ -281,7 +285,7 @@ def make_season_cards():
 
                 if season in WATERMARKS:
                     mask = f"""
-                        <mask id="bodymask">
+                        <mask id="{PATTERN_MASK_ID}">
                             {rectangle_template(
                                 0,
                                 0,
@@ -302,7 +306,7 @@ def make_season_cards():
                     """
                     paths.append(mask)
 
-                    watermark = WATERMARKS[season]
+                    watermark = WATERMARKS[season](EM, STROKE_WIDTH)
                     watermark_color = mix_hex_colors(contrast_color.value, season_color.value, WATERMARK_SATURATION[season])
                     for x in range(-watermark.width, SIDE_LENGTH, watermark.width):
                         for y in range(-watermark.height, SIDE_LENGTH, watermark.height):
@@ -365,7 +369,7 @@ def make_blank_cards():
         )
 
         if season in WATERMARKS:
-            watermark = WATERMARKS[season]
+            watermark = WATERMARKS[season](EM, STROKE_WIDTH)
             watermark_color = mix_hex_colors(contrast_color.value, SEASON_COLORS[season].value, WATERMARK_SATURATION[season])
             for x in range(-watermark.width, SIDE_LENGTH*3 + watermark.width, watermark.width):
                 for y in range(-watermark.height, SIDE_LENGTH*3 + watermark.height, watermark.height):
@@ -631,7 +635,7 @@ def make_dummy_front():
     )
 
     mask = f"""
-        <mask id="bodymask">
+        <mask id="{PATTERN_MASK_ID}">
             {rectangle_template(
                 0,
                 0,
@@ -652,7 +656,7 @@ def make_dummy_front():
     """
     paths.append(mask)
 
-    watermark = WATERMARKS[season]
+    watermark = WATERMARKS[season](EM, STROKE_WIDTH)
     watermark_color = mix_hex_colors(contrast_color.value, season_color.value, WATERMARK_SATURATION[season])
     for x in range(0, SIDE_LENGTH, watermark.width):
         for y in range(0, SIDE_LENGTH, watermark.height):

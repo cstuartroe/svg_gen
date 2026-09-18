@@ -159,21 +159,6 @@ def rectangle_path(x, y, width, height):
     ])
 
 
-# TODO: deprecate
-def hexagon_path(x, y, side_length):
-    short_side = side_length/2
-    half_height = side_length*math.sqrt(3)/2
-
-    return polygon_path([
-        (x, y),
-        (x + side_length, y),
-        (x + side_length + short_side, y + half_height),
-        (x + side_length, y + 2*half_height),
-        (x, y + 2*half_height),
-        (x - short_side, y + half_height),
-    ])
-
-
 def centered_hexagon_path(cx, cy, side_length, vert=False):
     points = []
     for i in range(6):
@@ -202,8 +187,8 @@ def cube_paths(cx, cy, side_length):
 
 
 def leaf_paths(x, y, side_length):
-    half_height = side_length*math.sqrt(3)/2
-    cx, cy = x + side_length/2, y + half_height
+    half_width = side_length*math.sqrt(3)/2
+    cx, cy = x + half_width, y + side_length/2
 
     out = []
 
@@ -211,10 +196,10 @@ def leaf_paths(x, y, side_length):
         points = []
 
         corner_angle = i * math.pi / 3
-        corner_point = cx + side_length * math.cos(corner_angle), cy + side_length * math.sin(corner_angle)
+        corner_point = cx + side_length * math.sin(corner_angle), cy + side_length * math.cos(corner_angle)
 
         edge_angle = i * math.pi / 3 + math.pi / 6
-        leading_edge_point = cx + half_height * math.cos(edge_angle), cy + half_height * math.sin(edge_angle)
+        leading_edge_point = cx + half_width * math.sin(edge_angle), cy + half_width * math.cos(edge_angle)
 
         b1 = CustomBasis(cx, cy, *leading_edge_point)
         for point in [
@@ -248,6 +233,38 @@ def tessellating_clover_paths(x, y, E, F, radius, curve_radius):
     t = circumcircle_radius*math.sin(F)
     u = circumcircle_radius*math.sin(G)
     v = circumcircle_radius*math.sin(H)
+
+    angle = 7 * math.pi / 6
+    start_x, start_y = x + u * math.cos(angle), y + u * math.sin(angle)
+    points = []
+    prev_x, prev_y = start_x, start_y
+    for i in range(3):
+        right_branching_angle = angle + E + F - math.pi / 2
+        right_branch_x, right_branch_y = prev_x + v*math.cos(right_branching_angle), prev_y + v*math.sin(right_branching_angle)
+        points.append((right_branch_x, right_branch_y))
+
+        pointing_angle = right_branching_angle + math.pi/3
+        point_x, point_y = right_branch_x + v*math.cos(pointing_angle), right_branch_y + v*math.sin(pointing_angle)
+        points.append((point_x, point_y))
+
+        swooping_angle = angle - math.pi/6 - E - F
+        swoop_x, swoop_y = point_x + v*math.cos(swooping_angle), point_y + v*math.sin(swooping_angle)
+        points.append((swoop_x, swoop_y))
+
+        returning_angle = swooping_angle + math.pi/3
+        return_x, return_y = swoop_x + v*math.cos(returning_angle), swoop_y + v*math.sin(returning_angle)
+        points.append((return_x, return_y))
+
+        angle += 2*math.pi/3
+        prev_x, prev_y = return_x, return_y
+
+    vector_string = f"M {start_x} {start_y} "
+    for i, (x, y) in enumerate(points):
+        control_3 = 1 if i % 4 in [0, 3] else 0
+        vector_string += f"A {curve_radius} {curve_radius} 0 0 {control_3} {x} {y} "
+
+    return [vector_string]
+
 
     out = []
     for i in range(3):
@@ -323,21 +340,36 @@ class Rotation:
     cy: int
 
 
-def path_template(vertex_string, color):
+def path_template(vertex_string, color = None, border_color = None, border_width = None):
+    if border_color:
+        return f'<path d="{vertex_string}" style="fill:{color or 'none'};stroke:{border_color};stroke-width:{border_width}"/>'
+
     return f'<path d="{vertex_string}" fill="{color}"/>'
 
 
-def rectangle_template(x: int, y: int, width: int, height: int, color: str, radius: int = 0, rotation: Rotation | None = None):
+def mask_template(name: str, paths: list[str]):
+    return f'<mask id="{name}" mask-type="luminance">\n  {'\n  '.join(paths)}\n</mask>'
+
+
+def apply_mask(path: str, mask_name: str):
+    assert path.endswith("/>")
+    return path[:-2] + f' mask="url(#{mask_name})"/>'
+
+
+def rectangle_template(x: int, y: int, width: int, height: int, color: str, radius: int = 0, rotation: Rotation | None = None, border_color = None, border_width = None):
     fields = {
         "x": x,
         "y": y,
         "width": width,
         "height": height,
         "rx": radius,
-        "fill": color,
     }
     if rotation:
         fields["transform"] = f"rotate({rotation.degrees}, {rotation.cx}, {rotation.cy})"
+    if border_color:
+        fields["style"] = f"fill:{color or 'none'};stroke:{border_color};stroke-width:{border_width}"
+    else:
+        fields["fill"] = color
 
     param_strings = []
     for key, value in fields.items():
