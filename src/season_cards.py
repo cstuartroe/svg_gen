@@ -2,7 +2,7 @@ import os
 from dataclasses import dataclass
 from typing import Callable
 
-from utils import *
+from .utils import *
 
 CARDS_DIR = "images/season_cards"
 

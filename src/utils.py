@@ -266,29 +266,6 @@ def tessellating_clover_paths(x, y, E, F, radius, curve_radius):
     return [vector_string]
 
 
-    out = []
-    for i in range(3):
-        angle = i*2*math.pi/3 + 7*math.pi/6
-        start_x, start_y = x + u*math.cos(angle), y + u*math.sin(angle)
-
-        left_branching_angle = angle + math.pi/2 - E - F
-        left_branch_x, left_branch_y = start_x + v*math.cos(left_branching_angle), start_y + v*math.sin(left_branching_angle)
-
-        right_branching_angle = angle + E + F - math.pi/2
-        right_branch_x, right_branch_y = start_x + v*math.cos(right_branching_angle), start_y + v*math.sin(right_branching_angle)
-
-        out.append(
-            f'M{start_x}, {start_y} '
-            f'A{curve_radius} {curve_radius} 0 0 0 {left_branch_x} {left_branch_y}'
-            f'A{curve_radius} {curve_radius} 0 0 1 {start_x} {start_y}'
-            f'A{curve_radius} {curve_radius} 0 0 1 {right_branch_x} {right_branch_y}'
-            f'A{curve_radius} {curve_radius} 0 0 0 {start_x} {start_y}'
-            'Z'
-        )
-
-    return out
-
-
 def uniform_spiral_path(cx, cy, width, offsetr, totalr, jump, num_sections):
     start_point = (
         cx + width*math.cos(offsetr),

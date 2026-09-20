@@ -3,7 +3,7 @@ import re
 from PIL import Image
 from tqdm import tqdm
 
-from season_cards import SIDE_LENGTH
+from .season_cards import SIDE_LENGTH
 
 WIDTH = 10
 HEIGHT = 7

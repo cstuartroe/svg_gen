@@ -1,0 +1,10 @@
+<svg height="120" width="120">
+<path d="M 0.0 108.0 A 180.0 180.0 0 0 0 120.0 108.0 L 120.0 60.0 A 180.0 180.0 0 0 1 0.0 60.0 Z" fill="#1a150f"/>
+<path d="M 120.0 60.0 A 180.0 180.0 0 0 0 0.0 60.0" style="fill:none;stroke:#1a150f;stroke-width:1.2"/>
+<mask id="tower" mask-type="luminance">
+  <path d="M 0 0 L 120 0 L 120 120 L 0 120 Z" fill="white"/>
+  <path d="M 120.0 60.0 A 180.0 180.0 0 0 1 0.0 60.0" style="fill:none;stroke:black;stroke-width:1.2"/>
+  <path d="M 67.01480577065395 34.05 L 60.0 38.1 L 52.98519422934605 34.050000000000004 L 52.98519422934605 25.950000000000003 L 60.0 21.9 L 67.01480577065395 25.950000000000003 Z" fill="black"/>
+</mask>
+<path d="M 36.0 108.0 L 42.0 0 L 53.988 0 L 53.988 12.0 L 66.012 12.0 L 66.012 0 L 78.0 0 L 84.0 108.0 Z" fill="#1a150f" mask="url(#tower)"/>
+</svg>

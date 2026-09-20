@@ -4,7 +4,7 @@ import math
 from dataclasses import dataclass
 from enum import Enum
 from typing import Iterable
-from utils import svg_template, circle_template, rectangle_template, Rotation
+from .utils import svg_template, circle_template, rectangle_template, Rotation
 
 
 class Element(Enum):

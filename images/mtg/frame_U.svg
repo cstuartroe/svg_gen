@@ -2044,7 +2044,7 @@
 <path d="M975.0 1320.0A12.0 12.0 0 0 0 990.0 1320.0 12.0 12.0 0 0 1 1005.0 1320.0 12.0 12.0 0 0 0 990.0 1320.0 12.0 12.0 0 0 1 975.0 1320.0 " stroke="#595984" stroke-width="3.0" fill="none" mask="url(#bodymask)"/>
 <path d="M960 1344A12.0 12.0 0 0 0 975.0 1344 12.0 12.0 0 0 1 990.0 1344 12.0 12.0 0 0 0 975.0 1344 12.0 12.0 0 0 1 960 1344" stroke="#595984" stroke-width="3.0" fill="none" mask="url(#bodymask)"/>
 <path d="M975.0 1368.0A12.0 12.0 0 0 0 990.0 1368.0 12.0 12.0 0 0 1 1005.0 1368.0 12.0 12.0 0 0 0 990.0 1368.0 12.0 12.0 0 0 1 975.0 1368.0 " stroke="#595984" stroke-width="3.0" fill="none" mask="url(#bodymask)"/>
-<rect x="100" y="150" width="776" height="1060" rx="0" style="fill:#ddddcc;stroke:#1a150f;stroke-width:10.0"/>
-<path d="M100 100 L 876 100 A 80 80 0 0 1 876 180 L 100 180 A 80 80 0 0 1 100 100 Z" style="fill:#ddddcc;stroke:#1a150f;stroke-width:10.0"/>
-<path d="M100 727.6 L 876 727.6 A 80 80 0 0 1 876 807.6 L 100 807.6 A 80 80 0 0 1 100 727.6 Z" style="fill:#ddddcc;stroke:#1a150f;stroke-width:10.0"/>
+<rect x="100" y="150" width="776" height="1085.0" rx="0" style="fill:#cac9b9;stroke:#1a150f;stroke-width:10.0"/>
+<path d="M100 100 L 876 100 A 80 80 0 0 1 876 180 L 100 180 A 80 80 0 0 1 100 100 Z" style="fill:#cac9b9;stroke:#1a150f;stroke-width:10.0"/>
+<path d="M100 727.6 L 876 727.6 A 80 80 0 0 1 876 807.6 L 100 807.6 A 80 80 0 0 1 100 727.6 Z" style="fill:#cac9b9;stroke:#1a150f;stroke-width:10.0"/>
 </svg>
