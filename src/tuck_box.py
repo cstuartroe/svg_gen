@@ -1,7 +1,7 @@
 import cairosvg
 from PIL import Image, ImageFont, ImageDraw
-from utils import Color, svg_template, rectangle_template, path_template, polygon_path
-from svg_gen.src.season_cards import sun_path, moon_path, star_path, earth_path, solar_system_paths, NUMBERS, HALF, EM
+from .utils import Color, svg_template, rectangle_template, path_template, polygon_path
+from .season_cards import sun_path, moon_path, star_path, earth_path, solar_system_paths, NUMBERS, HALF, EM
 
 MULTIPLE = 10
 

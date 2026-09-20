@@ -58,7 +58,7 @@ def alia():
 
 
 def lauvinko_logo():
-    img = Image.open("../pngs/black_lotus.png")
+    img = Image.open("pngs/black_lotus.png")
     width, height = img.size
 
     draw = ImageDraw.Draw(img)
