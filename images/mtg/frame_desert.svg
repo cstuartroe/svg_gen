@@ -7,11 +7,11 @@
 <rect x="100" y="150" width="776" height="1085.0" rx="0" style="fill:#dcc682;stroke:#1a150f;stroke-width:10.0"/>
 <path d="M100 100 L 876 100 A 80 80 0 0 1 876 180 L 100 180 A 80 80 0 0 1 100 100 Z" style="fill:#ddd0a0;stroke:#1a150f;stroke-width:10.0"/>
 <path d="M100 727.6 L 876 727.6 A 80 80 0 0 1 876 807.6 L 100 807.6 A 80 80 0 0 1 100 727.6 Z" style="fill:#ddd0a0;stroke:#1a150f;stroke-width:10.0"/>
-<path d="M 557.282032302755 1060.0 L 488.0 1100.0 L 418.71796769724494 1060.0 L 418.7179676972449 980.0 L 488.0 940.0 L 557.2820323027552 980.0 Z" style="fill:none;stroke:#dcb038;stroke-width:13.320000000000002"/>
-<path d="M 488.0 1100.0 L 488.0 1164.0 Z" style="fill:none;stroke:#dcb038;stroke-width:13.320000000000002"/>
-<path d="M 557.282032302755 1060.0 L 612.7076581449592 1092.0 Z" style="fill:none;stroke:#dcb038;stroke-width:13.320000000000002"/>
-<path d="M 557.282032302755 980.0 L 612.7076581449592 948.0 Z" style="fill:none;stroke:#dcb038;stroke-width:13.320000000000002"/>
-<path d="M 488.0 940.0 L 488.0 876.0 Z" style="fill:none;stroke:#dcb038;stroke-width:13.320000000000002"/>
-<path d="M 418.71796769724494 980.0 L 363.2923418550409 947.9999999999999 Z" style="fill:none;stroke:#dcb038;stroke-width:13.320000000000002"/>
-<path d="M 418.71796769724494 1060.0 L 363.29234185504083 1092.0 Z" style="fill:none;stroke:#dcb038;stroke-width:13.320000000000002"/>
+<path d="M 557.282032302755 1060.0 L 488.0 1100.0 L 418.71796769724494 1060.0 L 418.7179676972449 980.0 L 488.0 940.0 L 557.2820323027552 980.0 Z" style="fill:none;stroke:#dcb038;stroke-width:24.0"/>
+<path d="M 488.0 1100.0 L 488.0 1164.0 Z" style="fill:none;stroke:#dcb038;stroke-width:24.0"/>
+<path d="M 557.282032302755 1060.0 L 612.7076581449592 1092.0 Z" style="fill:none;stroke:#dcb038;stroke-width:24.0"/>
+<path d="M 557.282032302755 980.0 L 612.7076581449592 948.0 Z" style="fill:none;stroke:#dcb038;stroke-width:24.0"/>
+<path d="M 488.0 940.0 L 488.0 876.0 Z" style="fill:none;stroke:#dcb038;stroke-width:24.0"/>
+<path d="M 418.71796769724494 980.0 L 363.2923418550409 947.9999999999999 Z" style="fill:none;stroke:#dcb038;stroke-width:24.0"/>
+<path d="M 418.71796769724494 1060.0 L 363.29234185504083 1092.0 Z" style="fill:none;stroke:#dcb038;stroke-width:24.0"/>
 </svg>

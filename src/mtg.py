@@ -23,16 +23,17 @@ BOTTOM_PADDING = 2.5*BORDER_THICKNESS
 
 
 LIGHT_GRAY = utils.mix_hex_colors(utils.Color.EARTH_BROWN.value, utils.Color.CREAM.value, .1)
+SEMILIGHT_GRAY = utils.mix_hex_colors(utils.Color.EARTH_BROWN.value, utils.Color.CREAM.value, .18)
 MEDIUM_GRAY = utils.mix_hex_colors(utils.Color.EARTH_BROWN.value, utils.Color.CREAM.value, .4)
 
 
 SEASON_LETTERS = {
-    season_cards.Season.AIR: "W",
-    season_cards.Season.EARTH: "B",
-    season_cards.Season.SPRING: "G",
-    season_cards.Season.SUMMER: "Y",
-    season_cards.Season.AUTUMN: "R",
-    season_cards.Season.WINTER: "U",
+    "W": season_cards.Season.AIR,
+    "B": season_cards.Season.EARTH,
+    "G": season_cards.Season.SPRING,
+    "Y": season_cards.Season.SUMMER,
+    "R": season_cards.Season.AUTUMN,
+    "U": season_cards.Season.WINTER,
 }
 
 LAND_NAMES = {
@@ -43,6 +44,30 @@ LAND_NAMES = {
     "R": "mountain",
     "U": "island",
 }
+
+
+MANA_PAIRS = [
+    "UG",
+    "GY",
+    "YR",
+    "RU",
+
+    "WU",
+    "UY",
+    "YW",
+
+    "BG",
+    "GR",
+    "RB",
+
+    "GW",
+    "WR",
+
+    "UB",
+    "BY",
+
+    "WB",
+]
 
 
 def badge_path(height: float, color: str) -> str:
@@ -61,8 +86,9 @@ def badge_path(height: float, color: str) -> str:
 
 
 def make_mtg_frame(
-        name: str, background_color:
-        str, text_background_color: str,
+        name: str,
+        background_color: str,
+        text_background_color: str,
         badge_color: str,
         watermark: season_cards.SeasonWatermark | None = None,
         watermark_color: str | None = None,
@@ -232,7 +258,7 @@ LEAF_PATH_PATTERN = '(<path d="M [0-9.-]+ [0-9.-]+ L [0-9.-]+ [0-9.-]+ L [0-9.-]
 
 
 def make_mana_symbol_paths(mana_type: str, generator: season_cards.WatermarkGenerator, color: str, scale: float, cx: float, cy: float) -> list[str]:
-    stroke_width = .0333 * scale
+    stroke_width = .06 * scale
 
     if mana_type == "B":
         earth_paths = generator(.18 * scale, stroke_width).curves(cx, cy, color)
@@ -307,13 +333,13 @@ def make_mana_symbol_paths(mana_type: str, generator: season_cards.WatermarkGene
 
 
 def make_mana_symbols():
-    for season, letter in SEASON_LETTERS.items():
+    cx = MANA_SYMBOL_HEIGHT / 2
+    cy = MANA_SYMBOL_HEIGHT / 2
+
+    for letter, season in SEASON_LETTERS.items():
         color = season_cards.SEASON_COLORS[season]
         generator = season_cards.WATERMARKS[season]
         watermark_color = MEDIUM_GRAY if color is utils.Color.CREAM else utils.Color.CREAM.value
-
-        cx = MANA_SYMBOL_HEIGHT / 2
-        cy = MANA_SYMBOL_HEIGHT / 2
 
         pattern_paths = make_mana_symbol_paths(
             mana_type=letter,
@@ -337,25 +363,83 @@ def make_mana_symbols():
                     ),
                     color=color.value,
                 ),
-                utils.mask_template(
-                    name=season_cards.PATTERN_MASK_ID,
-                    paths=[
-                        utils.path_template(
-                            utils.centered_hexagon_path(
-                                cx,
-                                cy,
-                                side_length=cy,
-                                vert=True,
-                            ),
-                            color="white",
-                        ),
-                    ],
-                ),
                 *pattern_paths,
             ],
         )
 
         with open(f"images/mtg/mana_{letter}.svg", "w") as fh:
+            fh.write(template)
+
+    dual_symbol_offset = cy*.45
+    dx = dual_symbol_offset/2
+    dy = dual_symbol_offset*((3/4)**.5)
+
+    for letter_pair in MANA_PAIRS:
+        l1, l2 = letter_pair
+
+        season1 = SEASON_LETTERS[l1]
+        color1 = season_cards.SEASON_COLORS[season1]
+        generator1 = season_cards.WATERMARKS[season1]
+        watermark_color1 = MEDIUM_GRAY if color1 is utils.Color.CREAM else utils.Color.CREAM.value
+
+        pattern_paths1 = make_mana_symbol_paths(
+            mana_type=l1,
+            generator=generator1,
+            color=watermark_color1,
+            scale=MANA_SYMBOL_HEIGHT/2,
+            cx=cx - dx,
+            cy=cy - dy,
+        )
+
+        season2 = SEASON_LETTERS[l2]
+        color2 = season_cards.SEASON_COLORS[season2]
+        generator2 = season_cards.WATERMARKS[season2]
+        watermark_color2 = MEDIUM_GRAY if color2 is utils.Color.CREAM else utils.Color.CREAM.value
+
+        pattern_paths2 = make_mana_symbol_paths(
+            mana_type=l2,
+            generator=generator2,
+            color=watermark_color2,
+            scale=MANA_SYMBOL_HEIGHT/2,
+            cx=cx + dx,
+            cy=cy + dy,
+        )
+
+        hex_points = utils.centered_hexagon_points(
+            cx=cx,
+            cy=cy,
+            side_length=cy,
+            vert=True,
+        )
+
+        template = utils.svg_template(
+            MANA_SYMBOL_HEIGHT,
+            MANA_SYMBOL_HEIGHT,
+            paths=[
+                utils.path_template(
+                    utils.polygon_path([
+                        hex_points[2],
+                        hex_points[3],
+                        hex_points[4],
+                        hex_points[5],
+                    ]),
+                    color=color1.value,
+                ),
+                utils.path_template(
+                    utils.polygon_path([
+                        hex_points[5],
+                        hex_points[0],
+                        hex_points[1],
+                        hex_points[2],
+                    ]),
+                    color=color2.value,
+                ),
+                *pattern_paths1,
+                *pattern_paths2,
+            ],
+        )
+
+        with open(f"images/mtg/mana_{l1}{l2}.svg", "w") as fh:
             fh.write(template)
 
 
@@ -439,8 +523,8 @@ def make_city_states_logo():
         fh.write(template)
 
 
-if __name__ == "__main__":
-    for season, letter in SEASON_LETTERS.items():
+def make_color_and_mana_frames():
+    for letter, season in SEASON_LETTERS.items():
         color = season_cards.SEASON_COLORS[season]
         badge_color = utils.mix_hex_colors(color.value, utils.Color.CREAM.value, .3)
 
@@ -453,6 +537,15 @@ if __name__ == "__main__":
             background_color=color.value,
             text_background_color=utils.mix_hex_colors(color.value, utils.Color.WHITE.value, .2),
             badge_color=badge_color,
+            watermark=watermark,
+            watermark_color=watermark_color,
+        )
+
+        make_mtg_frame(
+            name=letter + "_dual",
+            background_color=color.value,
+            text_background_color=utils.mix_hex_colors(color.value, utils.Color.WHITE.value, .2),
+            badge_color=SEMILIGHT_GRAY,
             watermark=watermark,
             watermark_color=watermark_color,
         )
@@ -472,7 +565,25 @@ if __name__ == "__main__":
             mana_symbol_color=MEDIUM_GRAY if color is utils.Color.CREAM else color.value,
         )
 
+
+def make_colorless_frame():
+    make_mtg_frame(
+        name="C",
+        background_color=MEDIUM_GRAY,
+        text_background_color=LIGHT_GRAY,
+        badge_color=SEMILIGHT_GRAY,
+    )
+
+    make_pt_badge(
+        name="C",
+        badge_color=SEMILIGHT_GRAY,
+    )
+
+
+if __name__ == "__main__":
     make_mana_badge()
     make_mana_symbols()
     make_tap_symbol()
     make_city_states_logo()
+    make_color_and_mana_frames()
+    make_colorless_frame()

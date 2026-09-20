@@ -1,13 +1,10 @@
 <svg height="40" width="40">
 <path d="M 37.32050807568878 30.0 L 20.0 40.0 L 2.679491924311229 30.000000000000007 L 2.679491924311222 10.000000000000004 L 19.999999999999996 0.0 L 37.32050807568878 10.000000000000007 Z" fill="#dcb038"/>
-<mask id="bodymask" mask-type="luminance">
-  <path d="M 37.32050807568878 30.0 L 20.0 40.0 L 2.679491924311229 30.000000000000007 L 2.679491924311222 10.000000000000004 L 19.999999999999996 0.0 L 37.32050807568878 10.000000000000007 Z" fill="white"/>
-</mask>
-<path d="M 26.92820323027551 24.0 L 20.0 28.0 L 13.071796769724493 24.000000000000004 L 13.07179676972449 16.0 L 20.0 12.0 L 26.92820323027551 16.000000000000004 Z" style="fill:none;stroke:#ddddcc;stroke-width:1.332"/>
-<path d="M 20.0 28.0 L 20.0 34.4 Z" style="fill:none;stroke:#ddddcc;stroke-width:1.332"/>
-<path d="M 26.928203230275507 24.0 L 32.47076581449592 27.200000000000003 Z" style="fill:none;stroke:#ddddcc;stroke-width:1.332"/>
-<path d="M 26.92820323027551 16.0 L 32.47076581449592 12.800000000000002 Z" style="fill:none;stroke:#ddddcc;stroke-width:1.332"/>
-<path d="M 20.0 12.0 L 20.0 5.6 Z" style="fill:none;stroke:#ddddcc;stroke-width:1.332"/>
-<path d="M 13.071796769724493 15.999999999999996 L 7.529234185504087 12.799999999999994 Z" style="fill:none;stroke:#ddddcc;stroke-width:1.332"/>
-<path d="M 13.071796769724491 24.0 L 7.529234185504084 27.200000000000003 Z" style="fill:none;stroke:#ddddcc;stroke-width:1.332"/>
+<path d="M 26.92820323027551 24.0 L 20.0 28.0 L 13.071796769724493 24.000000000000004 L 13.07179676972449 16.0 L 20.0 12.0 L 26.92820323027551 16.000000000000004 Z" style="fill:none;stroke:#ddddcc;stroke-width:2.4"/>
+<path d="M 20.0 28.0 L 20.0 34.4 Z" style="fill:none;stroke:#ddddcc;stroke-width:2.4"/>
+<path d="M 26.928203230275507 24.0 L 32.47076581449592 27.200000000000003 Z" style="fill:none;stroke:#ddddcc;stroke-width:2.4"/>
+<path d="M 26.92820323027551 16.0 L 32.47076581449592 12.800000000000002 Z" style="fill:none;stroke:#ddddcc;stroke-width:2.4"/>
+<path d="M 20.0 12.0 L 20.0 5.6 Z" style="fill:none;stroke:#ddddcc;stroke-width:2.4"/>
+<path d="M 13.071796769724493 15.999999999999996 L 7.529234185504087 12.799999999999994 Z" style="fill:none;stroke:#ddddcc;stroke-width:2.4"/>
+<path d="M 13.071796769724491 24.0 L 7.529234185504084 27.200000000000003 Z" style="fill:none;stroke:#ddddcc;stroke-width:2.4"/>
 </svg>

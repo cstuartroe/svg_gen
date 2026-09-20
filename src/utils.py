@@ -159,15 +159,19 @@ def rectangle_path(x, y, width, height):
     ])
 
 
-def centered_hexagon_path(cx, cy, side_length, vert=False):
+def centered_hexagon_points(cx, cy, side_length, vert=False):
     points = []
     for i in range(6):
-        angle = i*math.pi/3
+        angle = i * math.pi / 3
         if vert:
-            angle += math.pi/6
+            angle += math.pi / 6
 
-        points.append((cx + side_length*math.cos(angle), cy + side_length*math.sin(angle)))
-    return polygon_path(points)
+        points.append((cx + side_length * math.cos(angle), cy + side_length * math.sin(angle)))
+    return points
+
+
+def centered_hexagon_path(cx, cy, side_length, vert=False):
+    return polygon_path(centered_hexagon_points(cx, cy, side_length, vert))
 
 
 def cube_paths(cx, cy, side_length):
