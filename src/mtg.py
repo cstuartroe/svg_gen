@@ -35,8 +35,17 @@ SEASON_LETTERS = {
     season_cards.Season.WINTER: "U",
 }
 
+LAND_NAMES = {
+    "W": "steppe",
+    "B": "floodplain",
+    "G": "forest",
+    "Y": "desert",
+    "R": "mountain",
+    "U": "island",
+}
 
-def badge_path(height: float) -> str:
+
+def badge_path(height: float, color: str) -> str:
     return utils.path_template(
         vertex_string=(
             f"M{SIDE_PADDING} {height} "
@@ -45,22 +54,38 @@ def badge_path(height: float) -> str:
             f"L {SIDE_PADDING} {height + BADGE_HEIGHT} "
             f"A {BADGE_CURVE_RADIUS} {BADGE_CURVE_RADIUS} 0 0 1 {SIDE_PADDING} {height} Z"
         ),
-        color=LIGHT_GRAY,
+        color=color,
         border_color=utils.Color.EARTH_BROWN.value,
         border_width=INTERNAL_BORDER_WIDTH,
     )
 
 
-def make_mtg_frame(season: season_cards.Season, letter: str):
-    color = season_cards.SEASON_COLORS[season]
-    contrast_color = utils.Color.EARTH_BROWN if color is utils.Color.CREAM else utils.Color.CREAM
-    watermark = season_cards.WATERMARKS[season](.375*EM, .075*EM)
-
+def make_mtg_frame(
+        name: str, background_color:
+        str, text_background_color: str,
+        badge_color: str,
+        watermark: season_cards.SeasonWatermark | None = None,
+        watermark_color: str | None = None,
+        mana_symbol: season_cards.WatermarkGenerator | None = None,
+        mana_type: str | None = None,
+        mana_symbol_color: str | None = None,
+):
     pattern_paths = []
-    watermark_color = utils.mix_hex_colors(contrast_color.value, color.value, season_cards.WATERMARK_SATURATION[season])
-    for x in range(-watermark.width, CARD_WIDTH, watermark.width):
-        for y in range(-watermark.height, CARD_HEIGHT, watermark.height):
-            pattern_paths += watermark.curves(x, y, watermark_color)
+    if watermark:
+        for x in range(-watermark.width, CARD_WIDTH, watermark.width):
+            for y in range(-watermark.height, CARD_HEIGHT, watermark.height):
+                pattern_paths += watermark.curves(x, y, watermark_color)
+
+    mana_symbol_paths = []
+    if mana_symbol:
+        mana_symbol_paths += make_mana_symbol_paths(
+            mana_type=mana_type,
+            generator=mana_symbol,
+            color=mana_symbol_color,
+            scale=10*EM,
+            cx=CARD_WIDTH//2,
+            cy=CARD_HEIGHT*.75,
+        )
 
     template = utils.svg_template(
         width=CARD_WIDTH,
@@ -79,7 +104,7 @@ def make_mtg_frame(season: season_cards.Season, letter: str):
                 BORDER_THICKNESS,
                 CARD_WIDTH - 2*BORDER_THICKNESS,
                 CARD_HEIGHT - 2*BORDER_THICKNESS,
-                color=color.value,
+                color=background_color,
                 radius=0,
             ),
             utils.mask_template(
@@ -101,23 +126,24 @@ def make_mtg_frame(season: season_cards.Season, letter: str):
                 3*BORDER_THICKNESS,
                 CARD_WIDTH - 4*BORDER_THICKNESS,
                 CARD_HEIGHT - 3*BORDER_THICKNESS - BOTTOM_PADDING,
-                color=LIGHT_GRAY,
+                color=text_background_color,
                 border_color=utils.Color.EARTH_BROWN.value,
                 border_width=INTERNAL_BORDER_WIDTH,
             ),
-            badge_path(TITLE_BADGE_HEIGHT),
-            badge_path(TYPE_BADGE_HEIGHT),
+            badge_path(TITLE_BADGE_HEIGHT, badge_color),
+            badge_path(TYPE_BADGE_HEIGHT, badge_color),
+            *mana_symbol_paths,
         ],
     )
 
-    with open(f"images/mtg/frame_{letter}.svg", "w") as fh:
+    with open(f"images/mtg/frame_{name}.svg", "w") as fh:
         fh.write(template)
 
 
 PT_BADGE_WIDTH = 7*BORDER_THICKNESS
 
 
-def make_pt_badge():
+def make_pt_badge(name: str, badge_color: str):
     template = utils.svg_template(
         PT_BADGE_WIDTH,
         BADGE_HEIGHT + INTERNAL_BORDER_WIDTH,
@@ -130,18 +156,15 @@ def make_pt_badge():
                     f"L {2 * BORDER_THICKNESS} {BADGE_HEIGHT + INTERNAL_BORDER_WIDTH/2} "
                     f"A {BADGE_CURVE_RADIUS} {BADGE_CURVE_RADIUS} 0 0 1 {2 * BORDER_THICKNESS} {INTERNAL_BORDER_WIDTH/2} Z"
                 ),
-                color=LIGHT_GRAY,
+                color=badge_color,
                 border_color=utils.Color.EARTH_BROWN.value,
                 border_width=INTERNAL_BORDER_WIDTH,
             ),
         ],
     )
 
-    with open(f"images/mtg/badge_pt.svg", "w") as fh:
+    with open(f"images/mtg/badge_pt_{name}.svg", "w") as fh:
         fh.write(template)
-
-
-SYMBOL_CONTENT_PROPORTION = .94
 
 
 def make_mana_badge():
@@ -157,15 +180,6 @@ def make_mana_badge():
                     vert=True,
                 ),
                 color=MEDIUM_GRAY,
-            ),
-            utils.path_template(
-                utils.centered_hexagon_path(
-                    cx=MANA_SYMBOL_HEIGHT/2,
-                    cy=MANA_SYMBOL_HEIGHT/2,
-                    side_length=SYMBOL_CONTENT_PROPORTION*MANA_SYMBOL_HEIGHT/2,
-                    vert=True,
-                ),
-                color=LIGHT_GRAY,
             ),
         ],
     )
@@ -184,12 +198,6 @@ def make_tap_symbol():
             cy=cy,
             radius=cy,
             color=MEDIUM_GRAY,
-        ),
-        utils.circle_template(
-            cx=cx,
-            cy=cy,
-            radius=SYMBOL_CONTENT_PROPORTION*cy,
-            color=LIGHT_GRAY,
         ),
     ]
 
@@ -222,76 +230,99 @@ def make_tap_symbol():
 LEAF_PATH_PATTERN = '(<path d="M [0-9.-]+ [0-9.-]+ L [0-9.-]+ [0-9.-]+ L [0-9.-]+ [0-9.-]+ L [0-9.-]+ [0-9.-]+ L [0-9.-]+ [0-9.-]+ L [0-9.-]+ [0-9.-]+ )L [0-9.-]+ [0-9.-]+ L [0-9.-]+ [0-9.-]+ (" stroke="#[0-9a-f]+" stroke-width="[0-9.]+" fill="none" mask="url\\(#bodymask\\)"/>)'
 
 
+
+def make_mana_symbol_paths(mana_type: str, generator: season_cards.WatermarkGenerator, color: str, scale: float, cx: float, cy: float) -> list[str]:
+    stroke_width = .0333 * scale
+
+    if mana_type == "B":
+        earth_paths = generator(.18 * scale, stroke_width).curves(cx, cy, color)
+        return earth_paths[:4]
+
+    elif mana_type == "G":
+        scaled_watermark = generator(.133 * scale, stroke_width)
+        return scaled_watermark.curves(cx, cy, color)[:1]
+
+    elif mana_type == "R":
+        scaled_watermark = generator(.09 * scale, stroke_width)
+        h1 = scaled_watermark.curves(cx - scaled_watermark.width / 2, cy - scaled_watermark.height / 2, color)
+        h2 = scaled_watermark.curves(cx - 3 * scaled_watermark.width / 2, cy - scaled_watermark.height / 2,
+                                     color)
+        hex_paths = [h1[0], h1[5], h1[10], h1[9], h2[8], h2[7]]
+
+        pattern_paths = []
+        for i, path in enumerate(hex_paths):
+            if i % 2 == 0:
+                pattern_paths.append(path)
+            else:
+                m = re.match(LEAF_PATH_PATTERN, path)
+                if m is None:
+                    print(path)
+                pattern_paths.append(m.group(1) + m.group(2))
+
+        return pattern_paths
+
+    elif mana_type == "U":
+        scaled_watermark = generator(.15 * scale, stroke_width)
+        wave_paths = []
+        for y in [-1, 0]:
+            for x in [-1, 0]:
+                wave_paths += scaled_watermark.curves(cx + x * scaled_watermark.width, cy + y * scaled_watermark.height,
+                                                      color)
+        return [wave_paths[1], *wave_paths[4:7]]
+
+    elif mana_type == "W":
+        scaled_watermark = generator(.18 * scale, stroke_width)
+        return scaled_watermark.curves(cx, cy, color)[:2]
+
+    elif mana_type == "Y":
+        side_length = .2 * scale
+
+        pattern_paths = [
+            utils.path_template(
+                utils.centered_hexagon_path(cx, cy, side_length, vert=True),
+                border_color=color,
+                border_width=stroke_width,
+            )
+        ]
+
+        spoke_length = .8
+        for i in range(6):
+            corner_x = cx + math.sin(i * math.pi / 3) * side_length
+            corner_y = cy + math.cos(i * math.pi / 3) * side_length
+            tip_x = cx + math.sin(i * math.pi / 3) * side_length * (1 + spoke_length)
+            tip_y = cy + math.cos(i * math.pi / 3) * side_length * (1 + spoke_length)
+
+            pattern_paths.append(
+                utils.path_template(
+                    utils.polygon_path([(corner_x, corner_y), (tip_x, tip_y)]),
+                    border_color=color,
+                    border_width=stroke_width,
+                ),
+            )
+
+        return pattern_paths
+
+    else:
+        raise ValueError
+
+
 def make_mana_symbols():
     for season, letter in SEASON_LETTERS.items():
         color = season_cards.SEASON_COLORS[season]
-        watermark = season_cards.WATERMARKS[season]
+        generator = season_cards.WATERMARKS[season]
         watermark_color = MEDIUM_GRAY if color is utils.Color.CREAM else utils.Color.CREAM.value
 
         cx = MANA_SYMBOL_HEIGHT / 2
         cy = MANA_SYMBOL_HEIGHT / 2
-        stroke_width = .0333*MANA_SYMBOL_HEIGHT
 
-        if letter == "B":
-            earth_paths = watermark(.25*MANA_SYMBOL_HEIGHT, stroke_width).curves(cx, cy, watermark_color)
-            pattern_paths = earth_paths[1:4]
-        elif letter == "G":
-            scaled_watermark = watermark(.133*MANA_SYMBOL_HEIGHT, stroke_width)
-            pattern_paths = scaled_watermark.curves(cx, cy, watermark_color)[:1]
-        elif letter == "R":
-            scaled_watermark = watermark(.09*MANA_SYMBOL_HEIGHT, stroke_width)
-            h1 = scaled_watermark.curves(cx - scaled_watermark.width/2, cy - scaled_watermark.height/2, watermark_color)
-            h2 = scaled_watermark.curves(cx - 3*scaled_watermark.width/2, cy - scaled_watermark.height/2, watermark_color)
-            hex_paths = [h1[0], h1[5], h1[10], h1[9], h2[8], h2[7]]
-
-            pattern_paths = []
-            for i, path in enumerate(hex_paths):
-                if i % 2 == 0:
-                    pattern_paths.append(path)
-                else:
-                    m = re.match(LEAF_PATH_PATTERN, path)
-                    if m is None:
-                        print(path)
-                    pattern_paths.append(m.group(1) + m.group(2))
-
-        elif letter == "U":
-            scaled_watermark = watermark(.15*MANA_SYMBOL_HEIGHT, stroke_width)
-            wave_paths = []
-            for y in [-1, 0]:
-                for x in [-1, 0]:
-                    wave_paths += scaled_watermark.curves(cx + x*scaled_watermark.width, cy + y*scaled_watermark.height, watermark_color)
-            pattern_paths = [wave_paths[1], *wave_paths[4:7]]
-        elif letter == "W":
-            scaled_watermark = watermark(.18 * MANA_SYMBOL_HEIGHT, stroke_width)
-            pattern_paths = scaled_watermark.curves(cx, cy, watermark_color)[:2]
-        elif letter == "Y":
-            side_length = .4*cx
-
-            pattern_paths = [
-                utils.path_template(
-                    utils.centered_hexagon_path(cx, cy, side_length, vert=True),
-                    border_color=watermark_color,
-                    border_width=stroke_width,
-                )
-            ]
-
-            spoke_length = .8
-            for i in range(6):
-                corner_x = cx + math.sin(i*math.pi/3)*side_length
-                corner_y = cx + math.cos(i*math.pi/3)*side_length
-                tip_x = cx + math.sin(i*math.pi/3)*side_length*(1+spoke_length)
-                tip_y = cx + math.cos(i*math.pi/3)*side_length*(1+spoke_length)
-
-                pattern_paths.append(
-                    utils.path_template(
-                        utils.polygon_path([(corner_x, corner_y), (tip_x, tip_y)]),
-                        border_color=watermark_color,
-                        border_width=stroke_width,
-                    ),
-                )
-
-        else:
-            raise ValueError
+        pattern_paths = make_mana_symbol_paths(
+            mana_type=letter,
+            generator=generator,
+            color=watermark_color,
+            scale=MANA_SYMBOL_HEIGHT,
+            cx=cx,
+            cy=cy,
+        )
 
         template = utils.svg_template(
             MANA_SYMBOL_HEIGHT,
@@ -304,32 +335,11 @@ def make_mana_symbols():
                         side_length=cy,
                         vert=True,
                     ),
-                    color=MEDIUM_GRAY,
-                ),
-                utils.path_template(
-                    utils.centered_hexagon_path(
-                        cx,
-                        cy,
-                        side_length=SYMBOL_CONTENT_PROPORTION*cy,
-                        vert=True,
-                    ),
                     color=color.value,
                 ),
-                # utils.circle_template(
-                #     cx,
-                #     cy,
-                #     radius=cy,
-                #     color=color.value,
-                # ),
                 utils.mask_template(
                     name=season_cards.PATTERN_MASK_ID,
                     paths=[
-                        # utils.circle_template(
-                        #     cx,
-                        #     cy,
-                        #     radius=cy,
-                        #     color="white",
-                        # ),
                         utils.path_template(
                             utils.centered_hexagon_path(
                                 cx,
@@ -431,9 +441,37 @@ def make_city_states_logo():
 
 if __name__ == "__main__":
     for season, letter in SEASON_LETTERS.items():
-        make_mtg_frame(season, letter)
+        color = season_cards.SEASON_COLORS[season]
+        badge_color = utils.mix_hex_colors(color.value, utils.Color.CREAM.value, .3)
 
-    make_pt_badge()
+        contrast_color = utils.Color.EARTH_BROWN if color is utils.Color.CREAM else utils.Color.CREAM
+        watermark = season_cards.WATERMARKS[season](.375*EM, .075*EM)
+        watermark_color = utils.mix_hex_colors(contrast_color.value, color.value, season_cards.WATERMARK_SATURATION[season])
+
+        make_mtg_frame(
+            name=letter,
+            background_color=color.value,
+            text_background_color=utils.mix_hex_colors(color.value, utils.Color.WHITE.value, .2),
+            badge_color=badge_color,
+            watermark=watermark,
+            watermark_color=watermark_color,
+        )
+
+        make_pt_badge(
+            name=letter,
+            badge_color=badge_color,
+        )
+
+        make_mtg_frame(
+            name=LAND_NAMES[letter],
+            background_color=utils.Color.LAND_TAN.value,
+            text_background_color=utils.mix_hex_colors(color.value, utils.Color.CREAM.value, .5),
+            badge_color=badge_color,
+            mana_symbol=season_cards.WATERMARKS[season],
+            mana_type=letter,
+            mana_symbol_color=MEDIUM_GRAY if color is utils.Color.CREAM else color.value,
+        )
+
     make_mana_badge()
     make_mana_symbols()
     make_tap_symbol()

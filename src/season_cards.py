@@ -182,7 +182,10 @@ class SeasonWatermark:
 STROKE_WIDTH = .2*EM
 
 
-WATERMARKS: dict[Season, Callable[[float, float], SeasonWatermark]] = {
+WatermarkGenerator = Callable[[float, float], SeasonWatermark]
+
+
+WATERMARKS: dict[Season, WatermarkGenerator] = {
     Season.SPRING: lambda em, stroke_width: SeasonWatermark(
         # See comment in tessellating_clover_paths. There's some constraint that I failed to figure out, so I
         # arrived at these numbers by some trial and error.

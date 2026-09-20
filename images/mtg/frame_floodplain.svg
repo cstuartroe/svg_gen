@@ -1,0 +1,14 @@
+<svg height="1360" width="976">
+<rect x="0" y="0" width="976" height="1360" rx="40" fill="#1a150f"/>
+<rect x="50" y="50" width="876" height="1260" rx="0" fill="#998066"/>
+<mask id="bodymask" mask-type="luminance">
+  <rect x="50" y="50" width="876" height="1260" rx="0" fill="white"/>
+</mask>
+<rect x="100" y="150" width="776" height="1085.0" rx="0" style="fill:#7c796e;stroke:#1a150f;stroke-width:10.0"/>
+<path d="M100 100 L 876 100 A 80 80 0 0 1 876 180 L 100 180 A 80 80 0 0 1 100 100 Z" style="fill:#a2a193;stroke:#1a150f;stroke-width:10.0"/>
+<path d="M100 727.6 L 876 727.6 A 80 80 0 0 1 876 807.6 L 100 807.6 A 80 80 0 0 1 100 727.6 Z" style="fill:#a2a193;stroke:#1a150f;stroke-width:10.0"/>
+<path d="M 612.7076581449592 1092.0 L 488.0 1164.0 L 363.29234185504083 1092.0 L 363.29234185504083 948.0 L 488.0 876.0 L 612.7076581449592 948.0 Z" stroke="#1a150f" stroke-width="13.320000000000002" fill="none" mask="url(#bodymask)"/>
+<path d="M 488.0 1020.0 L 581.5307436087194 966.0 " stroke="#1a150f" stroke-width="13.320000000000002" fill="none" mask="url(#bodymask)"/>
+<path d="M 488.0 1020.0 L 488.0 1128.0 " stroke="#1a150f" stroke-width="13.320000000000002" fill="none" mask="url(#bodymask)"/>
+<path d="M 488.0 1020.0 L 394.4692563912806 966.0 " stroke="#1a150f" stroke-width="13.320000000000002" fill="none" mask="url(#bodymask)"/>
+</svg>

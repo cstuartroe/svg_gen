@@ -304,6 +304,8 @@ class Color(Enum):
     WINTER_BLUE = hsl_to_hex(240/360, .24, .4)
     EARTH_BROWN = hsl_to_hex(33/360, .27, .08)
 
+    LAND_TAN = hsl_to_hex(30/360, .2, .5)
+
 @dataclass
 class Rotation:
     degrees: int
