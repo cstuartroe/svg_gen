@@ -293,22 +293,16 @@ class Color(Enum):
     BLACK = "#000000"
     WHITE = "#ffffff"
     INDIGO = "#003355"
-    BP = "#3e008f"
     GOLD = "#ffbb00"
     MEDIUM_BLUE = "#114488"
     FOREST_GREEN = "#005500"
-    PURPLE = "#330055"
-    RED = "#661111"
-    CREAM = "#ddddcc"
 
-    SPRING_GREEN = "#478547"
-    SUMMER_GOLD = "#dcb038"
-    AUTUMN_RED = "#994936"
-    WINTER_BLUE = "#4e4e7e"
-    EARTH_BROWN = "#1a150f"
-
-    BLUE_GRAY = "#202027"
-
+    CREAM = hsl_to_hex(60/360, .2, .832)
+    SPRING_GREEN = hsl_to_hex(120/360, .3, .4)
+    SUMMER_GOLD = hsl_to_hex(44/360, .7, .54)
+    AUTUMN_RED = hsl_to_hex(12/360, .48, .4045)
+    WINTER_BLUE = hsl_to_hex(240/360, .24, .4)
+    EARTH_BROWN = hsl_to_hex(33/360, .27, .08)
 
 @dataclass
 class Rotation:
